@@ -19,7 +19,7 @@ bool read_input_file(const char *devnode) {
             ev.type == EV_KEY &&
             (ev.value == 0 || ev.value == 1)
         ) {
-            is_esc_pressed = map_code(ev.code, ev.value) != MapSaveStatus::SUCCESS;
+            is_esc_pressed = map_code(ev.code, ev.value) == ProcesssResponse::END;
         }
     }
 

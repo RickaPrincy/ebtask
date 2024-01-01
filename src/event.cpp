@@ -18,25 +18,25 @@ void reset_event(){
     is_for_value = true;
 }
 
-bool check_event(std::string text){
+ProcesssResponse check_event(std::string text){
     if(function_name.size() > 50 || current_value.size()> 10000){
         type_response(function_name.size() + current_value.size(), "Too long", true);
-        return false;
+        return ProcesssResponse::END;
     }
 
     if(text == "("){
         if(is_for_value){
             type_response(1, "Using \"(\" as parameter is not possible", true);
-            return false;
+            return ProcesssResponse::END;
         }
 
         if(function_name.empty()){
             type_response(1, "No function name", true);
-            return false;
+            return ProcesssResponse::END;
         }
 
         is_for_value = true;
-        return true;
+        return ProcesssResponse::SUCCESS;
     }
 
     if(text == ")"){
@@ -53,7 +53,7 @@ bool check_event(std::string text){
         replace_value(command, current_value);
 
         type_response(current_value.size() + function_name.size(), execute_command(command));
-        return false;
+        return ProcesssResponse::END;
     }
 
     if(is_for_value)
@@ -61,5 +61,5 @@ bool check_event(std::string text){
     else    
         function_name += function_name;
 
-    return true;
+    return ProcesssResponse::SUCCESS;
 }

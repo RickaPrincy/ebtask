@@ -4,5 +4,10 @@
     #include <string>
     std::string get_current_datetime();
     void replace_value(std::string& command,const std::string& value);
-
+    
+    enum class ProcesssResponse{
+        END, 
+        ERROR,
+        SUCCESS
+    };
 #endif

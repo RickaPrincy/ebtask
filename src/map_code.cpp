@@ -12,7 +12,6 @@ bool
     is_esc_pressed = false, 
     is_lshift_pressed = false, 
     is_altgr_pressed = false, 
-    is_tabpressed = false, 
     is_capslock_pressed = false;
 
 // Mapper for basic azerty 
@@ -88,7 +87,7 @@ std::unordered_map<int, KeyValue> keyboard_layout = {
     {100,    {"KEY_RIGHTALT",   "KEY_RIGHTALT",    "KEY_RIGHTALT"}},
 };
 
-bool emit_code(int code){
+ProcesssResponse emit_code(int code){
     if(is_capslock_pressed || is_lshift_pressed || is_rshift_pressed)
         return check_event(keyboard_layout[code].shift);
     if(is_altgr_pressed)
@@ -96,14 +95,11 @@ bool emit_code(int code){
     return check_event(keyboard_layout[code].normal);
 }
 
-MapSaveStatus map_code(int code, int value){
+ProcesssResponse map_code(int code, int value){
     bool status = value == 1;
     switch(code){
         case 1:
             is_esc_pressed = status;
-            break;
-        case 15:
-            is_tabpressed = status;
             break;
         case 100:
             is_altgr_pressed = status;
@@ -119,10 +115,13 @@ MapSaveStatus map_code(int code, int value){
             break;
         default:
             if( is_parsing && ((status && code != 29 && code >= 1 && code <= 54) || code == 57)){
-                if(!emit_code(code)){
+                ProcesssResponse response = emit_code(code);
+                
+                if(response == ProcesssResponse::ERROR || response == ProcesssResponse::END){
                     is_parsing = false;
                     reset_event();
-                    return MapSaveStatus::ERROR;
+                    if(response == ProcesssResponse::ERROR)
+                        return ProcesssResponse::END;
                 }
             }
             break;
@@ -130,7 +129,7 @@ MapSaveStatus map_code(int code, int value){
 
     if(is_lshift_pressed && is_rshift_pressed ){
         reset_event();
-        if(is_tabpressed){
+        if(is_capslock_pressed){
             is_parsing = !is_parsing;
             if(is_parsing)
                 std::cout << "[ LOG ]: parsing started" << "\n";
@@ -138,7 +137,7 @@ MapSaveStatus map_code(int code, int value){
                 std::cout << "[ LOG ]: parsing stoped" << "\n";
         }
         else if(is_esc_pressed)
-            return MapSaveStatus::END;
+            return ProcesssResponse::END;
     }
-    return MapSaveStatus::SUCCESS; 
+    return ProcesssResponse::SUCCESS; 
 }
