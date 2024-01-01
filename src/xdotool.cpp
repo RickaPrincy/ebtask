@@ -1,24 +1,26 @@
-#include <cstdlib>
-#include "xdotool.h"
-
 #include <iostream>
 #include <cstdio>
 #include <memory>
 #include <stdexcept>
 #include <string>
 #include <array>
+#include <cstdlib>
+#include "xdotool.h"
 
-std::string execute_command(const std::string& command) {
+std::string execute_command(std::string command) {
+    const char* cmd = command.c_str();
     std::array<char, 128> buffer;
     std::string result;
-    std::shared_ptr<FILE> pipe(popen(command.c_str(), "r"), pclose);
+    std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
 
     if (!pipe) {
-        return "ERROR: Cannot launch the command";
+        throw std::runtime_error("Erreur lors de l'ouverture du pipe.");
     }
 
-    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
-        result += buffer.data();
+    while (!feof(pipe.get())) {
+        if (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr) {
+            result += buffer.data();
+        }
     }
 
     return result;

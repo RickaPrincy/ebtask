@@ -1,6 +1,7 @@
 #include <chrono>
 #include <ctime>
 #include <iomanip>
+#include <iostream>
 #include "rkeylogger.h"
 
 std::string get_current_datetime(){
