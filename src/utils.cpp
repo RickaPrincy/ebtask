@@ -13,3 +13,8 @@ std::string get_current_datetime(){
 
     return oss.str();
 }
+
+void replace_value(std::string& command,const std::string& value) {
+    size_t position = command.find("?");
+    if (position != std::string::npos) command.replace(position, 1, value);
+}
