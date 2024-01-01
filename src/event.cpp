@@ -1,5 +1,6 @@
 #include "event.h"
 #include <unordered_map>
+#include <iostream>
 #include "xdotool.h"
 #include "utils.h"
 
@@ -15,18 +16,18 @@ std::unordered_map<std::string, std::string> actions{
 void reset_event(){
     current_value = "";
     function_name = "";
-    is_for_value = true;
+    is_for_value = false;
 }
 
 ProcesssResponse check_event(std::string text){
-    if(function_name.size() > 50 || current_value.size()> 10000){
+    if(function_name.size() > 10 || current_value.size()> 10000){
         type_response(function_name.size() + current_value.size(), "Too long", true);
         return ProcesssResponse::END;
     }
 
     if(text == "("){
         if(is_for_value){
-            type_response(1, "Using \"(\" as parameter is not possible", true);
+            type_response(function_name.size() + current_value.size() + 1 , "Check your function_name", true);
             return ProcesssResponse::END;
         }
 
@@ -41,12 +42,14 @@ ProcesssResponse check_event(std::string text){
 
     if(text == ")"){
         if(!is_for_value){
-            type_response(1, "Using \")\" as parameter is not possible", true);
+            type_response(1, "Value error", true);
+            return ProcesssResponse::END;
         }
         
         auto key = actions.find(function_name);
         if(key == actions.end()){
-            type_response(function_name.size() + current_value.size(), "Function not found", true);
+            type_response(function_name.size() + current_value.size() + 1, "Function not found", true);
+            return ProcesssResponse::END;
         }
 
         std::string command = actions.at(function_name);
@@ -59,7 +62,9 @@ ProcesssResponse check_event(std::string text){
     if(is_for_value)
         current_value += text;
     else    
-        function_name += function_name;
+        function_name += text;
 
+    std::cout << "current_value " <<  current_value << "\n";
+    std::cout << "function_name " << function_name << "\n";
     return ProcesssResponse::SUCCESS;
 }
