@@ -10,7 +10,7 @@ int main(int argc, const char *argv[])
 	CLI::App ebtask("Execute background easily");
 
 	ebtask.add_subcommand("create_layout", "Remap a layout for your keyboard")
-		->callback([]() { start(create_layout); });
+		->callback([]() { start(create_layout, true); });
 
 	ebtask.add_subcommand("launch", "Launch the ebtask application")
 		->callback([]() { start(listen); });

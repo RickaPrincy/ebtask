@@ -3,6 +3,6 @@
 
 #include "utils/utils.h"
 
-void start(ebtask::Callback callback);
+void start(ebtask::Callback callback, bool is_create_layout = false);
 
 #endif // !__EBTASK_START__
