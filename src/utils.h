@@ -16,7 +16,6 @@ namespace ebtask
     inline void log(std::string message){
 		std::cout << "[ LOG ]: " << message << std::endl;
     }
-
 };	// namespace ebtask
 
 #endif

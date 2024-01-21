@@ -12,27 +12,28 @@ struct Config;
 Config get_config_if_valid(nlohmann::json config);
 Config get_config();
 
-enum class ActionType{
-    FUNCTION,
-    KEY
+class Action
+{
+public:
+	std::vector<std::string> _keybinding{};
+    std::string _function{}, _command{};
+	Action(){};
 };
 
-struct Action
+class Mode
 {
-	std::string _keybinding{}, _command{};
-    ActionType _type{ActionType::FUNCTION};
-};
-
-struct Mode
-{
+public:
 	std::vector<Action> _actions{};
-	std::string _keybinding{};
+	std::vector<std::string> _keybinding{};
+	Mode(){};
 };
 
-struct Config{
-    std::map<std::string, Mode> _modes{};
-    std::vector<std::string> stop_keybinding{};
+class Config
+{
+public:
+	std::vector<Mode> _modes{};
+	std::vector<std::string> _stop_keybinding{};
+	Config(){};
 };
-
 
 #endif	// !__EBTASK_CONFIG__

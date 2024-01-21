@@ -15,12 +15,12 @@ int main(int argc, char *argv[])
 		ebtask::exit_error("Cannot use libudev.h");
 	}
 
-	ebtask::log("Use the following keyboard event path: " + devnode + "\n");
+	ebtask::log("Use the following keyboard event path: " + devnode);
 
-	if (!read_input_file(devnode.c_str()))
-	{
-		ebtask::exit_error("Cannot open the file (probably a permission problem or missing keyboard");
-	}
+	// if (!read_input_file(devnode.c_str()))
+	// {
+	// 	ebtask::exit_error("Cannot open the file (probably a permission problem or missing keyboard");
+	// }
 	
     ebtask::log("Finished with success !!");
 	return EXIT_SUCCESS;

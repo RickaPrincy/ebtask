@@ -17,7 +17,7 @@ Config get_config()
 	if (EBTASK_CONFIG_VALUE == nullptr)
 	{
 		std::string config_path = EBTASK_CONFIG_ENV;
-		ebtask::exit_error("Make sure that " + config_path + "env exist on your environment");
+		ebtask::exit_error("Make sure that " + config_path + " env exist on your environment");
 	}
 
 	std::string ebtask_path_value = EBTASK_CONFIG_VALUE;

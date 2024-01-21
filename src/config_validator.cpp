@@ -1,3 +1,4 @@
+#include <exception>
 #include <iostream>
 
 #include "config.h"
@@ -5,22 +6,35 @@
 
 using json = nlohmann::json;
 
+// make some huge validator here
 Config get_config_if_valid(nlohmann::json config)
 {
-	if (!config.is_object())
-	{
-		ebtask::exit_error("ebtask config must be an object");
-	}
+    try{
+        Config config_content{};
+        config_content._stop_keybinding = config["stop_keybinding"];
+        
+        for(auto _mode : config["modes"]){
+            Mode mode{};
+            mode._keybinding =  _mode["keybinding"];
+            for(auto _action: _mode){
+                Action action{};
+                action._keybinding = _action["keybinding"];
+                action._command = _action["command"];
+                action._function = _action["function"];
 
-	if (!config["stop"].is_array())
-	{
-		ebtask::exit_error("Must set a keybind to stop ebtask (ex: [\"KEY_ENTER\", \"KEY_LEFTSHIFT\"])");
-	}
+                if(action._function.empty() && action._keybinding.empty()){
+                    ebtask::exit_error("one of function and keybinding is required for each actions");
+                }
+                mode._actions.push_back(action);
+            }
+            config_content._modes.push_back(mode);
+        }
 
-	if (!config["modes"].is_array())
-	{
-		ebtask::exit_error("modes must be present and must be array");
-	}
-
-    return Config();
+        return config_content;
+    }
+    catch(std::exception error){
+        std::cerr << error.what() << std::endl;
+        ebtask::exit_error("Configuration file not valid, please the docs");
+    }
+	return Config();
 }
