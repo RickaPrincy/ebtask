@@ -26,6 +26,7 @@ class Mode
 public:
 	std::vector<Action> _actions{};
 	std::vector<std::string> _keybinding{};
+	std::string _name;
 	Mode(){};
 };
 
