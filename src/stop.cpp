@@ -2,5 +2,5 @@
 
 bool stop(int code, short type)
 {
-	return code == 30;
+	return code == 1;
 }

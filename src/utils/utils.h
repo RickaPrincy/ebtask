@@ -5,8 +5,8 @@
 #include <iostream>
 #include <string>
 
-#define PRESSED 0
-#define RELEASED 1
+#define PRESSED 1
+#define RELEASED 0
 #define EBTASK_PATH_ENV "EBTASK_PATH"
 
 enum class StartType
@@ -17,7 +17,7 @@ enum class StartType
 
 namespace ebtask
 {
-	using Callback = void (*)(int code, short type);
+	using Callback = bool(*)(int code, short type, int enter_code);
 
 	inline void exit_error(std::string message)
 	{

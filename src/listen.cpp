@@ -1,6 +1,7 @@
 #include <iostream>
 #include "command_actions.h"
 
-void listen(int code, short type){
-    std::cout << "code from listen " << std::endl;
+bool listen(int code, short type,int enter_code){
+    std::cout << "code from listen " << code << std::endl;
+    return false;
 }

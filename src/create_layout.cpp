@@ -14,11 +14,9 @@ using json = nlohmann::json;
 
 std::string get_line_value(std::string event)
 {
-	ebtask::log("Enter the value when " + event + " << is pressed");
-
+    std::cout << "[ LOG ]: Value when " + event + " is pressed =>";
 	std::string value;
 	std::getline(std::cin, value);
-	std::cout << "\n";
 
 	return value;
 }
@@ -28,7 +26,7 @@ void save_key(const Key &key){
     std::string keys_path = config_path + "/" + "ebtask.keys.json";
     std::ifstream current_keys(keys_path);
 
-    json current_keys_json;
+    json current_keys_json = json::object();
 
     if (current_keys.is_open()) {
         try {
@@ -39,9 +37,6 @@ void save_key(const Key &key){
         }
         current_keys.close();
     }
-    
-    if(!current_keys_json.is_object())
-        throw InvalidConfigurationError();
 
     if (!current_keys_json.contains("keys")) 
         current_keys_json["keys"] = json::array();
@@ -73,17 +68,27 @@ void save_key(const Key &key){
     }
 }
 
-void create_layout(int code, short type)
+bool create_layout(int code, short type, int enter_code)
 {
-    std::cout << "[ KEYMAP ]: " << code << std::endl;
+    if(code == enter_code || type == RELEASED)
+        return false;
+
+    std::cout << "[ KEYCODE ]: " << code << std::endl;
 	Key key{};
 	key._code = code; 
+    
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     key._normal = get_line_value("NORMAL");
+    
+    if(key._normal.empty())
+        return true;
+   
     key._alt = get_line_value("ALT");
     key._altgr = get_line_value("ALTGR");
     key._shift = get_line_value("SHIFT");
     key._capslock = get_line_value("CAPSLOCK");
 
     save_key(key);
-    ebtask::log("Key added, presse another key to add or the stop keybinding or ctrl + c to stop");
+    ebtask::log("Key added, type any and leave empty the NORMAL to stop or set is to continue");
+    return false;
 }
