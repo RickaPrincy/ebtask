@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "config.h"
-#include "utils.h"
+#include "utils/exception.h"
 
 using json = nlohmann::json;
 
@@ -33,7 +33,8 @@ Config get_config_if_valid(nlohmann::json config, std::string config_path)
         return config_content;
     }
     catch(nlohmann::json::exception error){
-        ebtask::exit_error("Configuration file not valid, please read the docs");
+        throw InvalidConfigurationError();
     }
+
 	return Config();
 }

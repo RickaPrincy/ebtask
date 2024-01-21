@@ -11,6 +11,7 @@ struct Config;
 
 Config get_config_if_valid(nlohmann::json config, std::string config_path);
 Config get_config();
+std::string get_config_path();
 
 class Action
 {

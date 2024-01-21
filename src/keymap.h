@@ -3,6 +3,6 @@
 
 #include <string>
 
-void create_layout(std::string config_path);
+void create_layout();
 
 #endif	// !__EBTASK_KEYMAP__

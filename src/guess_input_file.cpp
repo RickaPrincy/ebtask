@@ -1,9 +1,9 @@
-#include "guess_input_file.h"
-
 #include <libudev.h>
 
 #include <cstring>
 #include <iostream>
+
+#include "setup.h"
 
 std::string guess_input_file()
 {

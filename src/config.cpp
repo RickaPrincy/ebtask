@@ -1,32 +1,47 @@
 #include "config.h"
 
 #include <cstdlib>
+#include <exception>
 #include <fstream>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 
-#include "utils.h"
+#include "utils/exception.h"
 
 using json = nlohmann::json;
 
 static const char* EBTASK_CONFIG_ENV = "EBTASK_PATH";
 static char* EBTASK_CONFIG_VALUE = std::getenv(EBTASK_CONFIG_ENV);
 
-Config get_config()
+std::string get_config_path()
 {
 	if (EBTASK_CONFIG_VALUE == nullptr)
 	{
 		std::string config_path = EBTASK_CONFIG_ENV;
-		ebtask::exit_error("Make sure that " + config_path + " env exist on your environment");
+		throw NotFoundConfigurationError();
 	}
 
-	std::string ebtask_path_value = EBTASK_CONFIG_VALUE;
+	std::string config_path = EBTASK_CONFIG_VALUE;
+	return config_path;
+}
+
+Config get_config()
+{
+	std::string ebtask_path_value{};
+
+	try
+	{
+		ebtask_path_value = get_config_path();
+	}
+	catch (NotFoundConfigurationError error)
+	{
+		ebtask::exit_error(error.what());
+	}
 
 	std::ifstream ebtask_config(ebtask_path_value + "/" + "ebtask.config.json");
 	if (!ebtask_config.is_open())
-	{
 		ebtask::exit_error("Cannot read " + ebtask_path_value);
-	}
 
 	json config;
 	try
@@ -36,9 +51,8 @@ Config get_config()
 	}
 	catch (json::exception error)
 	{
-		std::cerr << "[ ERROR ]: Your config file is not a valid json" << std::endl;
-		ebtask_config.close();
-		exit(EXIT_FAILURE);
+        ebtask_config.close();
+        throw InvalidConfigurationError();
 	}
 
 	return get_config_if_valid(config, ebtask_path_value);
