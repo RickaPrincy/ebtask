@@ -11,16 +11,17 @@
 #include "utils/utils.h"
 
 // TO handle ctrl + c or something else that can stop the application
-volatile std::sig_atomic_t is_running = true;
+bool is_running = true;
 
 void signal_handler(int signal)
 {
-	if (signal == SIGINT)
-		is_running = false;
+    is_running = false;
 }
 
 bool read_input_file(const char *devnode, ebtask::Callback callback)
 {
+    std::signal(SIGINT, signal_handler);
+
 	int fd = open(devnode, O_RDONLY);
 	if (fd == -1)
 		return false;
