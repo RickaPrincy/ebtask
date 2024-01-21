@@ -76,6 +76,9 @@ bool create_layout(int code, short type, int enter_code)
     std::cout << "[ KEYCODE ]: " << code << std::endl;
 	Key key{};
 	key._code = code; 
+    
+    //FIXME: Should do something else cause we have to type enter twice for the second input
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     key._normal = get_line_value("NORMAL");
 
     if(key._normal.empty())
