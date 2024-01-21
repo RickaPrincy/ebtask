@@ -1,11 +1,14 @@
 #include <iostream>
 
+#include "config.h"
 #include "guess_input_file.h"
 #include "read_input_file.h"
 #include "utils.h"
 
 int main(int argc, char *argv[])
 {
+    Config ebtask_config = get_config();
+
 	std::string devnode = guess_input_file();
 	if (devnode.empty())
 	{

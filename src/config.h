@@ -30,7 +30,8 @@ struct Mode
 };
 
 struct Config{
-    std::map<std::string, Mode> _mods{};
+    std::map<std::string, Mode> _modes{};
+    std::vector<std::string> stop_keybinding{};
 };
 
 
