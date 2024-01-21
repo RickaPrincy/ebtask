@@ -22,7 +22,7 @@ Config get_config()
 
 	std::string ebtask_path_value = EBTASK_CONFIG_VALUE;
 
-	std::ifstream ebtask_config(ebtask_path_value);
+	std::ifstream ebtask_config(ebtask_path_value + "/" + "ebtask.config.json");
 	if (!ebtask_config.is_open())
 	{
 		ebtask::exit_error("Cannot read " + ebtask_path_value);
@@ -41,5 +41,5 @@ Config get_config()
 		exit(EXIT_FAILURE);
 	}
 
-	return get_config_if_valid(config);
+	return get_config_if_valid(config, ebtask_path_value);
 }

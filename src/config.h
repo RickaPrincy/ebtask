@@ -9,14 +9,14 @@
 
 struct Config;
 
-Config get_config_if_valid(nlohmann::json config);
+Config get_config_if_valid(nlohmann::json config, std::string config_path);
 Config get_config();
 
 class Action
 {
 public:
 	std::vector<std::string> _keybinding{};
-    std::string _function{}, _command{};
+	std::string _function{}, _command{};
 	Action(){};
 };
 
@@ -33,6 +33,7 @@ class Config
 public:
 	std::vector<Mode> _modes{};
 	std::vector<std::string> _stop_keybinding{};
+	std::string _path;
 	Config(){};
 };
 

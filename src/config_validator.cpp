@@ -7,12 +7,12 @@
 using json = nlohmann::json;
 
 // make some huge validator here
-Config get_config_if_valid(nlohmann::json config)
+Config get_config_if_valid(nlohmann::json config, std::string config_path)
 {
     try{
         Config config_content{};
+        config_content._path = config_path;
         config_content._stop_keybinding = config["stop_keybinding"];
-        
         for(auto _mode : config["modes"]){
             Mode mode{};
             mode._keybinding =  _mode["keybinding"];
@@ -21,7 +21,7 @@ Config get_config_if_valid(nlohmann::json config)
                 action._keybinding = _action["keybinding"];
                 action._command = _action["command"];
                 action._function = _action["function"];
-
+                
                 if(action._function.empty() && action._keybinding.empty()){
                     ebtask::exit_error("one of function and keybinding is required for each actions");
                 }

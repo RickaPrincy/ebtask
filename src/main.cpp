@@ -1,27 +1,20 @@
 #include <iostream>
 
+#include "cli/CLI11.hpp"
 #include "config.h"
-#include "guess_input_file.h"
-#include "read_input_file.h"
-#include "utils.h"
+#include "keymap.h"
+#include "start.h"
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
-    Config ebtask_config = get_config();
+	Config ebtask_config = get_config();
+	CLI::App ebtask("Execute background easily");
 
-	std::string devnode = guess_input_file();
-	if (devnode.empty())
-	{
-		ebtask::exit_error("Cannot use libudev.h");
-	}
+	ebtask.add_subcommand("create_layout", "Remap a layout for your keyboard")
+		->callback([&ebtask_config]() { create_layout(ebtask_config._path); });
 
-	ebtask::log("Use the following keyboard event path: " + devnode);
+	ebtask.add_subcommand("start", "launch the ebtask application")->callback([]() { start(); });
 
-	// if (!read_input_file(devnode.c_str()))
-	// {
-	// 	ebtask::exit_error("Cannot open the file (probably a permission problem or missing keyboard");
-	// }
-	
-    ebtask::log("Finished with success !!");
+	CLI11_PARSE(ebtask, argc, argv);
 	return EXIT_SUCCESS;
 }
