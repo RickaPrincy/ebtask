@@ -14,7 +14,7 @@ bool read_input_file(const char *devnode)
 
 	struct input_event ev;
 	
-    // /!\ STOP USING SHORTCUT
+    // /!\ STOPED USING SHORTCUT
 	while (true)
 	{
 		ssize_t bytesRead = read(fd, &ev, sizeof(struct input_event));

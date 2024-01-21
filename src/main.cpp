@@ -2,25 +2,23 @@
 
 #include "guess_input_file.h"
 #include "read_input_file.h"
-#include "clipboard.h"
+#include "utils.h"
 
 int main(int argc, char *argv[])
 {
-    set_clipboard("Hello world");
-	// std::string devnode = guess_input_file();
-	// if (devnode.empty())
-	// {
-	// 	std::cerr << "[ ERROR ]: Cannot use libudev.h" << std::endl;
-	// 	return EXIT_FAILURE;
-	// }
-	// std::cout << "[ LOG ]: Use the following keyboard event path: " << devnode << "\n";
+	std::string devnode = guess_input_file();
+	if (devnode.empty())
+	{
+		ebtask::exit_error("Cannot use libudev.h");
+	}
 
-	// if (!read_input_file(devnode.c_str()))
-	// {
-	// 	std::cout << "[ ERROR ]: Cannot open the file (probably a permission problem or missing keyboard)" << std::endl;
-	// 	return EXIT_FAILURE;
-	// }
+	ebtask::log("Use the following keyboard event path: " + devnode + "\n");
 
-	// std::cout << "[ LOG ]: Finished with success !!" << std::endl;
+	if (!read_input_file(devnode.c_str()))
+	{
+		ebtask::exit_error("Cannot open the file (probably a permission problem or missing keyboard");
+	}
+	
+    ebtask::log("Finished with success !!");
 	return EXIT_SUCCESS;
 }
