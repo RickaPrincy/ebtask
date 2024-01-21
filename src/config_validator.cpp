@@ -16,7 +16,7 @@ Config get_config_if_valid(nlohmann::json config)
         for(auto _mode : config["modes"]){
             Mode mode{};
             mode._keybinding =  _mode["keybinding"];
-            for(auto _action: _mode){
+            for(auto _action: _mode["actions"]){
                 Action action{};
                 action._keybinding = _action["keybinding"];
                 action._command = _action["command"];
@@ -32,9 +32,8 @@ Config get_config_if_valid(nlohmann::json config)
 
         return config_content;
     }
-    catch(std::exception error){
-        std::cerr << error.what() << std::endl;
-        ebtask::exit_error("Configuration file not valid, please the docs");
+    catch(nlohmann::json::exception error){
+        ebtask::exit_error("Configuration file not valid, please read the docs");
     }
 	return Config();
 }
