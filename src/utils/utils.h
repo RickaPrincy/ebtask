@@ -17,6 +17,8 @@ enum class StartType
 
 namespace ebtask
 {
+	using Callback = void (*)(int code, short type);
+
 	inline void exit_error(std::string message)
 	{
 		std::cerr << "[ ERROR ]: " << message << std::endl;

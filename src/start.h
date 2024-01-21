@@ -3,7 +3,6 @@
 
 #include "utils/utils.h"
 
-void start(StartType type);
-
+void start(ebtask::Callback callback);
 
 #endif // !__EBTASK_START__

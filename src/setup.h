@@ -7,6 +7,6 @@
 
 std::string guess_input_file();
 
-bool read_input_file(const char *devnode, StartType type);
+bool read_input_file(const char *devnode, ebtask::Callback callback);
 
 #endif	// !__EBTASK_SETUP__

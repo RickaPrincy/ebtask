@@ -7,9 +7,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "keymap.h"
-#include "setup.h"
-#include "start_listen.h"
+#include "utils/utils.h"
 
 // TO handle ctrl + c or something else that can stop the application
 volatile std::sig_atomic_t is_running = true;
@@ -22,7 +20,7 @@ void signal_handler(int signal)
 	}
 }
 
-bool read_input_file(const char *devnode, StartType type)
+bool read_input_file(const char *devnode, ebtask::Callback callback)
 {
 	int fd = open(devnode, O_RDONLY);
 	if (fd == -1)
@@ -34,25 +32,21 @@ bool read_input_file(const char *devnode, StartType type)
 	while (is_running)
 	{
 		ssize_t bytesRead = read(fd, &ev, sizeof(struct input_event));
-		if (bytesRead == sizeof(struct input_event) && ev.type == EV_KEY && (ev.value == RELEASED || ev.value == PRESSED))
+		if (bytesRead == sizeof(struct input_event) && ev.type == EV_KEY &&
+			(ev.value == RELEASED || ev.value == PRESSED))
 		{
 			try
 			{
-				switch (type)
-				{
-					case StartType::NORMAL: start_listen(ev.code, ev.value); break;
-					case StartType::CREATE_LAYOUT: create_layout(); break;
-					default: break;
-				}
+				callback(ev.code, ev.type);
 			}
-			catch (std::runtime_error error)
+			catch (std::exception error)
 			{
 				std::cerr << "[ ERROR ]: " << error.what() << std::endl;
-				is_running = false;
+                break;
 			}
 		}
 	}
 
 	close(fd);
-	return true;
+	return !is_running;
 }
