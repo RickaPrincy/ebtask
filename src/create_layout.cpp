@@ -6,5 +6,5 @@
 
 void create_layout(int code, short type)
 {
-	std::cout << "code from create_layout" << std::endl;
+	std::cout << code << " code from create_layout" << std::endl;
 }

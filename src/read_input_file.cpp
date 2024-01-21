@@ -7,6 +7,7 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "command_actions.h"
 #include "utils/utils.h"
 
 // TO handle ctrl + c or something else that can stop the application
@@ -15,9 +16,7 @@ volatile std::sig_atomic_t is_running = true;
 void signal_handler(int signal)
 {
 	if (signal == SIGINT)
-	{
 		is_running = false;
-	}
 }
 
 bool read_input_file(const char *devnode, ebtask::Callback callback)
@@ -35,6 +34,12 @@ bool read_input_file(const char *devnode, ebtask::Callback callback)
 		if (bytesRead == sizeof(struct input_event) && ev.type == EV_KEY &&
 			(ev.value == RELEASED || ev.value == PRESSED))
 		{
+			if (stop(ev.code, ev.value))
+			{
+				is_running = false;
+				break;
+			}
+
 			try
 			{
 				callback(ev.code, ev.type);
@@ -42,7 +47,7 @@ bool read_input_file(const char *devnode, ebtask::Callback callback)
 			catch (std::exception error)
 			{
 				std::cerr << "[ ERROR ]: " << error.what() << std::endl;
-                break;
+				break;
 			}
 		}
 	}
