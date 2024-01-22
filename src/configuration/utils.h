@@ -7,10 +7,13 @@
 
 #include "json/json.hpp"
 
-std::tuple<std::string, nlohmann::json> get_configuraton_content_with_path(
-	std::string file_name,
+std::tuple<std::string, nlohmann::json> get_configuraton_content_with_path(std::string file_name,
 	bool is_required = false);
 std::string get_configuration_path();
 
-void load_keybinding(const nlohmann::json &json_objet, std::vector<int> &target, std::string key ="keybinding");
+void load_keybinding(const nlohmann::json &json_objet,
+	std::vector<int> &target,
+	std::string key = "keybinding");
+
+void save_json_file(const nlohmann::json &json_content, std::string path);
 #endif	// !__EBTASK_CONF_UTILS__

@@ -13,9 +13,13 @@ namespace ELogger
 		std::exit(EXIT_FAILURE);
 	}
 
-	inline void log(std::string message)
+	inline void log(std::string message, bool do_endl = true)
 	{
-		std::cout << "[ LOG ]: " << message << std::endl;
+		std::cout << "[ LOG ]: " << message;
+		if (do_endl)
+			std::cout << std::endl;
+		else
+			std::cout << "\n";
 	}
 };	// namespace ELogger
 

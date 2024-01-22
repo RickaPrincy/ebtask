@@ -1,5 +1,5 @@
 BasedOnStyle: Google
-AlignAfterOpenBracket: 'AlwaysBreak'
+AlignAfterOpenBracket: DontAlign
 AllowAllConstructorInitializersOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortCaseLabelsOnASingleLine: true

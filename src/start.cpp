@@ -13,11 +13,11 @@ void start(ECallBack::StartFunction start_function)
 
 	ELogger::log("Use the following keyboard event path: " + devnode);
 
-	// if (!read_input_file(devnode.c_str(), callback, is_create_layout))
-	// {
-	// 	ELogger::exit_error(
-	// 		"Cannot open the file (probably a permission problem or missing keyboard");
-	// }
+	if (!read_input_file(devnode.c_str(), start_function()))
+	{
+		ELogger::exit_error(
+			"Cannot open the file (probably a permission problem or missing keyboard)");
+	}
 
 	ELogger::log("Finished with success !!");
 }

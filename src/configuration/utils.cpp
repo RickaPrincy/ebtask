@@ -2,28 +2,25 @@
 
 #include <cstdlib>
 #include <fstream>
+#include <iomanip>
 
 #include "exception.h"
 #include "types.h"
 
 using json = nlohmann::json;
 
-static char* EBTASK_CONFIG_VALUE = std::getenv(EBTASK_PATH_ENV);
+static char *EBTASK_CONFIG_VALUE = std::getenv(EBTASK_PATH_ENV);
 
 std::string get_config_path()
 {
 	if (EBTASK_CONFIG_VALUE == nullptr)
-	{
-		std::string config_path = EBTASK_PATH_ENV;
 		throw NotFoundConfigurationError();
-	}
 
 	std::string config_path = EBTASK_CONFIG_VALUE;
 	return config_path;
 }
 
-std::tuple<std::string, nlohmann::json> get_configuraton_content_with_path(
-	std::string file_name,
+std::tuple<std::string, nlohmann::json> get_configuraton_content_with_path(std::string file_name,
 	bool is_required)
 {
 	std::string config_path = get_config_path();
@@ -39,7 +36,7 @@ std::tuple<std::string, nlohmann::json> get_configuraton_content_with_path(
 	{
 		config_file_content = json::parse(config_file);
 	}
-	catch (const std::exception& e)
+	catch (const std::exception &e)
 	{
 		config_file.close();
 		throw InvalidConfigurationError();
@@ -49,8 +46,17 @@ std::tuple<std::string, nlohmann::json> get_configuraton_content_with_path(
 	return std::make_tuple(config_file_content, config_file_content);
 }
 
-void load_keybinding(const nlohmann::json &json_objet,std::vector<int> &target, std::string key){
-    for(auto keybinding: json_objet[key]){
-        target.push_back(keybinding);
-    }
+void load_keybinding(const nlohmann::json &json_objet, std::vector<int> &target, std::string key)
+{
+	for (auto keybinding : json_objet[key])
+	{
+		target.push_back(keybinding);
+	}
+}
+
+void save_json_file(const nlohmann::json &json_content, std::string path)
+{
+	std::ofstream file(path);
+	file << std::setw(2) << json_content << std::endl;
+	file.close();
 }
