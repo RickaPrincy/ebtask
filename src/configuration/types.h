@@ -3,6 +3,7 @@
 
 #define EBTASK_PATH_ENV "EBTASK_PATH"
 
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -13,10 +14,11 @@ enum class KeyStatus
 	PRESSED = 1
 };
 
-namespace ebtask
+namespace ECallBack
 {
-	using Callback = bool (*)(int code, KeyStatus);
-}
+	using ReadFunction = std::function<bool(int code, KeyStatus status)>;
+	using StartFunction = ReadFunction (*)();
+}  // namespace ECallBack
 
 class Key
 {

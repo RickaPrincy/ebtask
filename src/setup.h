@@ -5,10 +5,10 @@
 
 #include "configuration/types.h"
 
-void start(ebtask::Callback callback);
+void start(ECallBack::StartFunction start_function);
 
 std::string guess_input_file();
 
-bool read_input_file(const char *devnode, ebtask::Callback callback, bool is_create_layout);
+bool read_input_file(const char *devnode, ECallBack::ReadFunction callback);
 
 #endif	// !__EBTASK_SETUP__

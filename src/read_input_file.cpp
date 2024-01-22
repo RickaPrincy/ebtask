@@ -17,7 +17,7 @@ void signal_handler(int signal)
 	is_running = false;
 }
 
-bool read_input_file(const char *devnode, ebtask::Callback callback)
+bool read_input_file(const char *devnode, ECallBack::ReadFunction callback)
 {
 	std::signal(SIGINT, signal_handler);
 

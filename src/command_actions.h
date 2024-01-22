@@ -3,7 +3,7 @@
 
 #include "configuration/types.h"
 
-bool create_layout(int code, KeyStatus status);
-bool listen_event(int code, KeyStatus status);
+ECallBack::ReadFunction remap_layout();
+ECallBack::ReadFunction listen_event();
 
 #endif	// !__EBTASK_COMMAND_ACTION__

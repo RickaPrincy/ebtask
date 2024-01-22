@@ -1,9 +1,13 @@
 #include <iostream>
 
 #include "command_actions.h"
+#include "configuration/types.h"
 
-bool listen_event(int code, KeyStatus status)
+ECallBack::ReadFunction listen_event()
 {
-	std::cout << "code from listen " << code << std::endl;
-	return false;
+	return [](int code, KeyStatus status)
+	{
+		std::cout << "code from listen_event" << std::endl;
+		return false;
+	};
 }
