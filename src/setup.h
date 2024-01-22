@@ -3,7 +3,9 @@
 
 #include <string>
 
-#include "utils/utils.h"
+#include "configuration/types.h"
+
+void start(ebtask::Callback callback);
 
 std::string guess_input_file();
 

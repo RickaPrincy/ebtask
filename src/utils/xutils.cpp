@@ -17,7 +17,7 @@ void copy_to_clipboard(const std::string &text)
 std::string execute_command(const std::string &command)
 {
 	const char *cmd = command.c_str();
-	// This will be trimed to avoid buffer overflow
+	// There is no bufferflow here XD
 	std::array<char, 128> buffer;
 	std::string result;
 	std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
