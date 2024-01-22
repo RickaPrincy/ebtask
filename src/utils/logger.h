@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-namespace ebtask
+namespace ELogger
 {
 	inline void exit_error(std::string message)
 	{
@@ -17,6 +17,6 @@ namespace ebtask
 	{
 		std::cout << "[ LOG ]: " << message << std::endl;
 	}
-};	// namespace ebtask
+};	// namespace ELogger
 
 #endif
