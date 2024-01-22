@@ -6,6 +6,22 @@
 
 #include "utils.h"
 
+class InvalidKeyError : public std::exception
+{
+private:
+	std::string message_;
+
+public:
+	InvalidKeyError() : message_("Your key configuration is not valid, please read the docs")
+	{
+	}
+
+	const char* what() const noexcept override
+	{
+		return message_.c_str();
+	}
+};
+
 class InvalidConfigurationError : public std::exception
 {
 private:

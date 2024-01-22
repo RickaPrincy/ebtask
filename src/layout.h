@@ -2,8 +2,10 @@
 #define __EBTASK_KEY__
 
 #include <string>
+#include <tuple>
 #include <vector>
 
+#include "json/json.hpp"
 #include "utils/utils.h"
 
 class Key
@@ -16,5 +18,8 @@ public:
 };
 
 // Key &get_key(int code);
+void save_key(const Key& key);
+void load_keys();
+std::tuple<std::string, nlohmann::json> get_key_config();
 
 #endif	// !__EBTASK_KEY__

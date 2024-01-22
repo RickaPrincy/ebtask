@@ -78,6 +78,11 @@ bool read_input_file(const char *devnode, ebtask::Callback callback, bool is_cre
 						return false;
 				}
 			}
+			catch (InvalidKeyError error)
+			{
+				std::cerr << "[ ERROR ]: " << error.what() << std::endl;
+				break;
+			}
 			catch (NotFoundConfigurationError error)
 			{
 				std::cerr << "[ ERROR ]: " << error.what() << std::endl;

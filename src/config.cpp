@@ -28,20 +28,11 @@ std::string get_config_path()
 
 Config get_config()
 {
-	std::string ebtask_path_value{};
-
-	try
-	{
-		ebtask_path_value = get_config_path();
-	}
-	catch (NotFoundConfigurationError error)
-	{
-		ebtask::exit_error(error.what());
-	}
-
+	std::string ebtask_path_value = get_config_path();
 	std::ifstream ebtask_config(ebtask_path_value + "/" + "ebtask.config.json");
+
 	if (!ebtask_config.is_open())
-		ebtask::exit_error("Cannot read " + ebtask_path_value);
+		throw NotFoundConfigurationError();
 
 	json config;
 	try
