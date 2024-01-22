@@ -37,7 +37,7 @@ bool read_input_file(const char *devnode, ebtask::Callback callback, bool is_cre
 	{
 		ssize_t bytesRead = read(fd, &ev, sizeof(struct input_event));
 		if (bytesRead == sizeof(struct input_event) && ev.type == EV_KEY &&
-			(ev.value == RELEASED || ev.value == PRESSED))
+			(ev.value == (int) KeyStatus::RELEASED || ev.value == (int) KeyStatus::PRESSED))
 		{
 			if (is_create_layout)
 			{
@@ -64,7 +64,7 @@ bool read_input_file(const char *devnode, ebtask::Callback callback, bool is_cre
 			}
 			try
 			{
-				if (callback(ev.code, ev.value, enter_code))
+				if (callback(ev.code, (KeyStatus) ev.value, enter_code))
 				{
 					is_running = false;
 					break;

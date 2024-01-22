@@ -13,7 +13,7 @@ class Key
 public:
 	int _code{ 1 };
 	std::string _normal{}, _alt{}, _altgr{}, _shift{}, _capslock{};
-	short _status{ RELEASED };
+	KeyStatus _status{ KeyStatus::RELEASED };
 	Key(){};
 };
 

@@ -5,19 +5,17 @@
 #include <iostream>
 #include <string>
 
-#define PRESSED 1
-#define RELEASED 0
 #define EBTASK_PATH_ENV "EBTASK_PATH"
 
-enum class StartType
-{
-	CREATE_LAYOUT,
-	NORMAL
+enum class KeyStatus{
+    NOT_FOUND = -1,
+    PRESSED = 1,
+    RELEASED = 0
 };
 
 namespace ebtask
 {
-	using Callback = bool(*)(int code, short type, int enter_code);
+	using Callback = bool(*)(int code, KeyStatus, int enter_code);
 
 	inline void exit_error(std::string message)
 	{

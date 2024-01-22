@@ -89,9 +89,9 @@ void save_key(const Key& key)
 }
 
 // To retrieve one by one user's layout
-bool create_layout(int code, short type, int enter_code)
+bool create_layout(int code, KeyStatus status, int enter_code)
 {
-	if (code == enter_code || type == RELEASED)
+    if (code == enter_code || status != KeyStatus::PRESSED)
 		return false;
 
 	std::cout << "[ KEYCODE ]: " << code << std::endl;
@@ -135,4 +135,10 @@ void load_keys()
 	{
 		throw InvalidKeyError();
 	}
+}
+
+KeyStatus get_key_status(int code){
+    if(_keys_.find(code) == _keys_.end()){
+        return KeyStatus::NOT_FOUND;
+    }
 }
