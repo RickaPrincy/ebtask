@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+
 #include "utils/utils.h"
 
 class Key
@@ -10,7 +11,7 @@ class Key
 public:
 	int _code{ 1 };
 	std::string _normal{}, _alt{}, _altgr{}, _shift{}, _capslock{};
-    short _status{RELEASED};
+	short _status{ RELEASED };
 	Key(){};
 };
 

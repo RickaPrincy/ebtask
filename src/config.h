@@ -16,7 +16,7 @@ std::string get_config_path();
 class Action
 {
 public:
-	std::vector<std::string> _keybinding{};
+	std::vector<int> _keybinding{};
 	std::string _function{}, _command{};
 	Action(){};
 };
@@ -25,7 +25,7 @@ class Mode
 {
 public:
 	std::vector<Action> _actions{};
-	std::vector<std::string> _keybinding{};
+	std::vector<int> _keybinding{};
 	std::string _name;
 	Mode(){};
 };
@@ -34,7 +34,7 @@ class Config
 {
 public:
 	std::vector<Mode> _modes{};
-	std::vector<std::string> _stop_keybinding{};
+	std::vector<int> _stop_keybinding{};
 	std::string _path;
 	Config(){};
 };

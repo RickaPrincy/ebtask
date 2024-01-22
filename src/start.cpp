@@ -3,7 +3,7 @@
 #include "setup.h"
 #include "utils/utils.h"
 
-void start(ebtask::Callback callback,bool is_create_layout)
+void start(ebtask::Callback callback, bool is_create_layout)
 {
 	std::string devnode = guess_input_file();
 	if (devnode.empty())

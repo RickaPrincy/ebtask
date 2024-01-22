@@ -44,7 +44,8 @@ void do_backspace(int repeat)
 	{
 		return;
 	}
-	std::string command = "xdotool key --clearmodifiers --repeat " + std::to_string(repeat) + " BackSpace";
+	std::string command =
+		"xdotool key --clearmodifiers --repeat " + std::to_string(repeat) + " BackSpace";
 	execute_command(command);
 }
 

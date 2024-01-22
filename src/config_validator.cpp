@@ -13,25 +13,31 @@ Config get_config_if_valid(nlohmann::json config, std::string config_path)
 	{
 		Config config_content{};
 		config_content._path = config_path;
-		config_content._stop_keybinding = config["stop_keybinding"];
+
+		for (int code : config["stop_keybinding"])
+		{
+			config_content._stop_keybinding.push_back(code);
+		}
 
 		for (auto _mode : config["modes"])
 		{
 			Mode mode{};
-			mode._keybinding = _mode["keybinding"];
+			for (int code : _mode["keybinding"])
+			{
+				mode._keybinding.push_back(code);
+			}
+
 			mode._name = _mode["name"];
 			for (auto _action : _mode["actions"])
 			{
 				Action action{};
-				action._keybinding = _action["keybinding"];
+				for (int code : config["stop_keybinding"])
+				{
+					action._keybinding.push_back(code);
+				}
+
 				action._command = _action["command"];
 				action._function = _action["function"];
-
-				if (action._function.empty() && action._keybinding.empty())
-				{
-					ebtask::exit_error(
-						"one of function and keybinding is required for each actions");
-				}
 				mode._actions.push_back(action);
 			}
 			config_content._modes.push_back(mode);

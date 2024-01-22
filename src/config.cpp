@@ -51,8 +51,8 @@ Config get_config()
 	}
 	catch (json::exception error)
 	{
-        ebtask_config.close();
-        throw InvalidConfigurationError();
+		ebtask_config.close();
+		throw InvalidConfigurationError();
 	}
 
 	return get_config_if_valid(config, ebtask_path_value);
