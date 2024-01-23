@@ -37,6 +37,12 @@ std::string execute_command(const std::string &command)
 	return result;
 }
 
+void xtype_string(const std::string &text)
+{
+	std::string command = "xdotool type \"" + text + "\"";
+	execute_command(command);
+}
+
 void do_backspace(int repeat)
 {
 	if (repeat <= 0)
@@ -53,11 +59,15 @@ void type_text_with_response(std::string text, int shortcut_size, bool is_error)
 	do_backspace(shortcut_size);
 	if (is_error)
 		text = "[ EROOR ]: " + text;
-	std::string command = "xdotool type \"" + text + "\"";
-	execute_command(command);
+	xtype_string(text);
 }
 
 void execute_and_copy(const std::string &command)
 {
 	copy_to_clipboard(execute_command(command));
+}
+
+void execute_and_type(const std::string &command)
+{
+	xtype_string(execute_command(command));
 }

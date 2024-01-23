@@ -30,15 +30,19 @@ void load_modes()
 			Mode _new_mode_{};
 			_new_mode_._name = mode["name"];
 			_new_mode_._type = mode["type"];
+			_new_mode_._is_function = mode["is_function"];
 			load_keybinding(mode, _new_mode_._keybinding);
 
 			for (auto action : mode["actions"])
 			{
 				Action _new_action_{};
 				_new_action_._command = action["command"];
-				_new_action_._command = action["command"];
-				_new_action_._function = action["function"];
-				load_keybinding(action, _new_action_._keybinding);
+
+				if (_new_mode_._is_function)
+					_new_action_._function = action["function"];
+				else
+					load_keybinding(action, _new_action_._keybinding);
+
 				_new_mode_._actions.push_back(_new_action_);
 			}
 			_modes_.push_back(_new_mode_);
@@ -71,10 +75,18 @@ void handle_action()
 
 	for (const auto &action : _current_mode_->_actions)
 	{
-		if (is_all_pressed(action._keybinding) && _current_mode_->_type == "xclip")
+		if (!_current_mode_->_is_function)
 		{
-			execute_and_copy(action._command);
-			ELogger::log(action._command + " [ EXECUTED AND COPIED ]");
+			if (is_all_pressed(action._keybinding))
+			{
+				if (_current_mode_->_type == "xclip")
+					execute_and_copy(action._command);
+				else if (_current_mode_->_type == "xdotool")
+					execute_and_type(action._command);
+				else
+					execute_command(action._command);
+				ELogger::log(action._command + " [ EXECUTED AND COPIED ]");
+			}
 		}
 	}
 }

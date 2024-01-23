@@ -1,5 +1,6 @@
 #include <string>
 
+#include "configuration/exception.h"
 #include "setup.h"
 #include "utils/logger.h"
 
@@ -13,12 +14,23 @@ void start(ECallBack::StartFunction start_function)
 
 	ELogger::log("Use the following keyboard event path: " + devnode);
 
-	if (!read_input_file(devnode.c_str(), start_function()))
+	try
 	{
-		ELogger::log("Exit with error");
+		if (!read_input_file(devnode.c_str(), start_function()))
+		{
+			ELogger::log("Exit with error");
+		}
+		else
+		{
+			ELogger::log("Finished with success !!");
+		}
 	}
-	else
+	catch (InvalidConfigurationError error)
 	{
-		ELogger::log("Finished with success !!");
+		ELogger::cerr(error.what());
+	}
+	catch (NotFoundConfigurationError error)
+	{
+		ELogger::cerr(error.what());
 	}
 }

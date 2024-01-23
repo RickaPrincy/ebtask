@@ -44,6 +44,7 @@ public:
 	std::vector<Action> _actions{};
 	std::vector<int> _keybinding{};
 	std::string _name{}, _type{};
+    bool _is_function{};
 	Mode(){};
 };
 
