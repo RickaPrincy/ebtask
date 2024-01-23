@@ -21,7 +21,7 @@ void load_keys()
 			Key _new_key_{};
 			_new_key_._code = key["code"];
 			_new_key_._normal = key["normal"];
-			_new_key_._altgr = key["_altgr"];
+			_new_key_._altgr = key["altgr"];
 			_new_key_._shift = key["shift"];
 			_new_key_._capslock = key["capslock"];
 			_keys_.insert(std::make_pair(_new_key_._code, _new_key_));

@@ -39,7 +39,7 @@ std::tuple<std::string, nlohmann::json> get_configuraton_content_with_path(std::
 		if (config_file.is_open())
 			config_file_content = json::parse(config_file);
 	}
-	catch (const nlohmann::json &error)
+	catch (const json::exception &error)
 	{
 		config_file.close();
 		throw InvalidConfigurationError(file_name + " is invalid");
