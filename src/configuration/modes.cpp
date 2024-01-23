@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <vector>
 
@@ -12,6 +13,20 @@
 using json = nlohmann::json;
 static std::vector<Mode> _modes_{};
 static const Mode *_current_mode_ = nullptr;
+static std::string _current_function_name_ = "";
+static std::string _current_function_arg_ = "";
+static std::string *_current_text_ = &_current_function_name_;
+
+static void execute_command_by_current_mode(const std::string &command)
+{
+	if (_current_mode_->_type == "xclip")
+		execute_and_copy(command);
+	else if (_current_mode_->_type == "xdotool")
+		execute_and_type(command);
+	else
+		execute_command(command);
+	ELogger::log(command + " [ EXECUTED ]");
+}
 
 void load_modes()
 {
@@ -54,6 +69,13 @@ void load_modes()
 	}
 }
 
+void reset_handling()
+{
+	_current_function_name_ = _current_function_arg_ = "";
+	_current_text_ = &_current_function_name_;
+	_current_mode_ = nullptr;
+}
+
 bool handle_mode()
 {
 	for (const auto &mode : _modes_)
@@ -68,25 +90,65 @@ bool handle_mode()
 	return false;
 }
 
-void handle_action()
+void handle_action(int code)
 {
 	if (_current_mode_ == nullptr)
 		return;
 
+	if (_current_mode_->_is_function)
+	{
+		handle_function(code);
+		return;
+	}
+
 	for (const auto &action : _current_mode_->_actions)
 	{
-		if (!_current_mode_->_is_function)
-		{
-			if (is_all_pressed(action._keybinding))
-			{
-				if (_current_mode_->_type == "xclip")
-					execute_and_copy(action._command);
-				else if (_current_mode_->_type == "xdotool")
-					execute_and_type(action._command);
-				else
-					execute_command(action._command);
-				ELogger::log(action._command + " [ EXECUTED AND COPIED ]");
-			}
-		}
+		if (!_current_mode_->_is_function && is_all_pressed(action._keybinding))
+			execute_command_by_current_mode(action._command);
 	}
+}
+
+void handle_function(int code)
+{
+	if (is_backspace(code))
+	{
+		if (!_current_text_->empty())
+			_current_text_->pop_back();
+		return;
+	}
+	else if (is_space(code))
+	{
+		*_current_text_ += " ";
+		return;
+	}
+
+	std::string key_value = get_value(code);
+
+	if (key_value == "(")
+		_current_text_ = &_current_function_arg_;
+	else if (key_value == ")")
+	{
+		do_backspace(_current_text_->size());
+
+		auto action = std::find_if(_current_mode_->_actions.begin(),
+			_current_mode_->_actions.end(),
+			[&](const auto &_action) { return _action._function == _current_function_name_; });
+
+		if (action == _current_mode_->_actions.end())
+		{
+			xtype_string("[ ERROR ]: Function not found");
+			reset_handling();
+			return;
+		}
+
+		execute_and_copy(action->_command);
+		reset_handling();
+	}
+	else if (_current_text_->size() > 50)
+	{
+		do_backspace(_current_text_->size());
+		xtype_string("[ ERROR ]: Too long arg or functio name");
+	}
+	else if (!is_special())
+		*_current_text_ += key_value;
 }

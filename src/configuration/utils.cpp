@@ -4,7 +4,6 @@
 #include <fstream>
 #include <iomanip>
 
-#include "../utils/logger.h"
 #include "exception.h"
 #include "json/json.hpp"
 #include "types.h"
