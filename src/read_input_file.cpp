@@ -9,7 +9,6 @@
 
 #include "configuration/exception.h"
 #include "configuration/types.h"
-#include "json/json.hpp"
 #include "utils/logger.h"
 
 // TO handle ctrl + c or something else that can stop the application
@@ -42,7 +41,7 @@ bool read_input_file(const char *devnode, ECallBack::ReadFunction callback)
 		{
 			try
 			{
-				if (callback(ev.code, static_cast<KeyStatus>(ev.value)))
+				if (callback(ev.code, static_cast<KeyStatus>(ev.value), fd, devnode))
 				{
 					is_running = false;
 					break;
@@ -58,11 +57,11 @@ bool read_input_file(const char *devnode, ECallBack::ReadFunction callback)
 				ELogger::cerr(error.what());
 				break;
 			}
-			// catch (std::exception error)
-			// {
-			// 	ELogger::cerr(error.what());
-			// 	break;
-			// }
+			catch (std::exception error)
+			{
+				ELogger::cerr(error.what());
+				break;
+			}
 		}
 	}
 
