@@ -161,7 +161,7 @@ void handle_function(int code)
 	{
 		do_backspace(_current_function_name_.size() + _current_function_arg_.size());
 		xtype_string("[ ERROR ]: Too long arg or function name");
-        reset_handling();
+		reset_handling();
 		return;
 	}
 	*_current_text_ += key_value;
