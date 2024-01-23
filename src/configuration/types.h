@@ -16,7 +16,8 @@ enum class KeyStatus
 
 namespace ECallBack
 {
-	using ReadFunction = std::function<bool(int code, KeyStatus status, int &fd, const char *devnode)>;
+	using ReadFunction =
+		std::function<bool(int code, KeyStatus status, int &fd, const char *devnode)>;
 	using StartFunction = ReadFunction (*)();
 }  // namespace ECallBack
 
@@ -42,7 +43,7 @@ class Mode
 public:
 	std::vector<Action> _actions{};
 	std::vector<int> _keybinding{};
-	std::string _name;
+	std::string _name{}, _type{};
 	Mode(){};
 };
 

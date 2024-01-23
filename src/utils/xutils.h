@@ -8,6 +8,7 @@ std::string execute_command(const std::string &command);
 
 // XCLIP
 void copy_to_clipboard(const std::string &text);
+void execute_and_copy(const std::string &command);
 
 // XDOTOOL
 void do_backspace(int repeat);

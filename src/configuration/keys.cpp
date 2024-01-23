@@ -63,3 +63,28 @@ void save_key(Key new_key)
 		throw InvalidConfigurationError();
 	}
 }
+
+KeyStatus update_key_status(int code, KeyStatus status)
+{
+	if (_keys_.find(code) == _keys_.end())
+		return KeyStatus::NOT_FOUND;
+	_keys_[code]._status = status;
+    return status;
+}
+
+KeyStatus get_key_status(int code)
+{
+	if (_keys_.find(code) == _keys_.end())
+		return KeyStatus::NOT_FOUND;
+	return _keys_[code]._status;
+}
+
+bool is_all_pressed(const std::vector<int> &keybinding)
+{
+	for (const auto &keybinding_code : keybinding)
+	{
+		if (get_key_status(keybinding_code) != KeyStatus::PRESSED)
+			return false;
+	}
+	return true;
+}
