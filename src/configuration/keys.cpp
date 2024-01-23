@@ -1,3 +1,4 @@
+#include <iostream>
 #include <unordered_map>
 
 #include "configuration.h"
@@ -28,7 +29,7 @@ void load_keys()
 	}
 	catch (json::exception error)
 	{
-		throw InvalidConfigurationError();
+		throw InvalidConfigurationError("Make sure that your keys in ebtask keys are all valid");
 	}
 }
 
@@ -40,8 +41,9 @@ void save_key(Key new_key)
 	{
 		if (!config_keys_content.contains("keys"))
 			config_keys_content["keys"] = json::array();
-		else if (!config_keys_content["keys"].is_array())
-			throw InvalidConfigurationError();
+		if (!config_keys_content["keys"].is_array())
+			throw InvalidConfigurationError(
+				"Your current ebtask key contains keys but it's no an array");
 		json new_json_key = json::object({ { "code", new_key._code },
 			{ "normal", new_key._normal },
 			{ "altgr", new_key._altgr },
@@ -49,11 +51,11 @@ void save_key(Key new_key)
 			{ "shift", new_key._shift } });
 		config_keys_content["keys"].push_back(new_json_key);
 
-		save_json_file(config_keys_path, config_keys_content);
+		save_json_file(config_keys_content, config_keys_path);
 	}
 	catch (json::exception error)
 	{
-		throw InvalidConfigurationError();
+		throw InvalidConfigurationError("Cannot save the keys");
 	}
 	catch (std::exception error)
 	{

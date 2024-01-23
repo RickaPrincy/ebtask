@@ -4,7 +4,9 @@
 #include <fstream>
 #include <iomanip>
 
+#include "../utils/logger.h"
 #include "exception.h"
+#include "json/json.hpp"
 #include "types.h"
 
 using json = nlohmann::json;
@@ -34,16 +36,17 @@ std::tuple<std::string, nlohmann::json> get_configuraton_content_with_path(std::
 
 	try
 	{
-		config_file_content = json::parse(config_file);
+		if (config_file.is_open())
+			config_file_content = json::parse(config_file);
 	}
-	catch (const std::exception &e)
+	catch (const nlohmann::json &error)
 	{
 		config_file.close();
-		throw InvalidConfigurationError();
+		throw InvalidConfigurationError(file_name + " is invalid");
 	}
 	config_file.close();
 
-	return std::make_tuple(config_file_content, config_file_content);
+	return std::make_tuple(config_file_path, config_file_content);
 }
 
 void load_keybinding(const nlohmann::json &json_objet, std::vector<int> &target, std::string key)

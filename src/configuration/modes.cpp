@@ -35,6 +35,6 @@ void load_modes()
 	}
 	catch (json::exception error)
 	{
-		throw InvalidConfigurationError();
+		throw InvalidConfigurationError("Your modes in ebtask config is not valid");
 	}
 }

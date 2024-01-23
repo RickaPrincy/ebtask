@@ -24,15 +24,17 @@ void save_special_key(int code)
 {
 	Key special_key{};
 	std::string key_name = _special_keys_names_.at(_special_keys_recorded_);
-	special_key._normal = special_key._shift = special_key._capslock = special_key._altgr =
-		key_name;
+	special_key._normal = key_name;
+	special_key._shift = key_name;
+	special_key._capslock = key_name;
+	special_key._altgr = key_name;
 	special_key._code = code;
+
 	if (key_name == "ENTER")
 		_enter_code_ = code;
 
 	_special_keys_recorded_++;
 
-	ELogger::log("Key code " + key_name + " is now " + std::to_string(code));
 	save_key(special_key);
 	ELogger::log("Key code " + key_name + " is now " + std::to_string(code));
 

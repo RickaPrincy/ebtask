@@ -7,9 +7,14 @@
 
 namespace ELogger
 {
-	inline void exit_error(std::string message)
+	inline void cerr(std::string message)
 	{
 		std::cerr << "[ ERROR ]: " << message << std::endl;
+	}
+
+	inline void exit_error(std::string message)
+	{
+		cerr(message);
 		std::exit(EXIT_FAILURE);
 	}
 

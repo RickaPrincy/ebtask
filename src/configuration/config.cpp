@@ -23,6 +23,6 @@ void load_configuration()
 	}
 	catch (json::exception error)
 	{
-		throw InvalidConfigurationError();
+		throw InvalidConfigurationError("stop_keybinding [array_of_string] is required on ebtask file config");
 	}
 }

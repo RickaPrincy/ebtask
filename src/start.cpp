@@ -15,9 +15,10 @@ void start(ECallBack::StartFunction start_function)
 
 	if (!read_input_file(devnode.c_str(), start_function()))
 	{
-		ELogger::exit_error(
-			"Cannot open the file (probably a permission problem or missing keyboard)");
+		ELogger::log("Exit with error");
 	}
-
-	ELogger::log("Finished with success !!");
+	else
+	{
+		ELogger::log("Finished with success !!");
+	}
 }

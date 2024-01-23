@@ -11,7 +11,7 @@ private:
 
 public:
 	InvalidConfigurationError(std::string message = "Your configuration is invalid, please read the docs")
-		: message_("[ INVALID_CONFIGURATION_ERROR ]: " + message)
+		: message_("_INVALID_CONFIGURATION_ERROR_ => " + message)
 	{
 	}
 
@@ -28,7 +28,7 @@ private:
 
 public:
 	NotFoundConfigurationError(std::string message = "Make sure that EBTASK_PATH exist on your ENV")
-		: message_("[ CONFIGURATION_CONFIGURATION_ERROR ]: " + message)
+		: message_("_NOT_FOUND_CONFIGURATION_ERROR_ => " + message)
 	{
 	}
 
