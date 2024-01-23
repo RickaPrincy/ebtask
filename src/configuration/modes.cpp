@@ -16,7 +16,9 @@ static const Mode *_current_mode_ = nullptr;
 static std::string _current_function_name_ = "";
 static std::string _current_function_arg_ = "";
 static std::string *_current_text_ = &_current_function_name_;
+static const std::string ARG_NAME = "$arg";
 
+// TODO: Refactor all of thi code
 static void execute_command_by_current_mode(const std::string &command)
 {
 	if (_current_mode_->_type == "xclip")
@@ -74,6 +76,7 @@ void reset_handling()
 	_current_function_name_ = _current_function_arg_ = "";
 	_current_text_ = &_current_function_name_;
 	_current_mode_ = nullptr;
+	ELogger::log("Back the NORMAL modes");
 }
 
 bool handle_mode()
@@ -110,6 +113,9 @@ void handle_action(int code)
 
 void handle_function(int code)
 {
+	if (is_special())
+		return;
+
 	if (is_backspace(code))
 	{
 		if (!_current_text_->empty())
@@ -125,30 +131,38 @@ void handle_function(int code)
 	std::string key_value = get_value(code);
 
 	if (key_value == "(")
+	{
 		_current_text_ = &_current_function_arg_;
+		return;
+	}
 	else if (key_value == ")")
 	{
-		do_backspace(_current_text_->size());
-
+		do_backspace(_current_function_name_.size() + _current_function_arg_.size() + 2);
 		auto action = std::find_if(_current_mode_->_actions.begin(),
 			_current_mode_->_actions.end(),
 			[&](const auto &_action) { return _action._function == _current_function_name_; });
-
 		if (action == _current_mode_->_actions.end())
 		{
-			xtype_string("[ ERROR ]: Function not found");
+			xtype_string("[ERROR] : Function not found");
 			reset_handling();
 			return;
 		}
 
-		execute_and_copy(action->_command);
+		std::string command_with_arg = action->_command;
+		size_t found = command_with_arg.find(ARG_NAME);
+		if (found != std::string::npos)
+			command_with_arg.replace(found, ARG_NAME.length(), _current_function_arg_);
+
+		execute_command_by_current_mode(command_with_arg);
 		reset_handling();
+		return;
 	}
 	else if (_current_text_->size() > 50)
 	{
-		do_backspace(_current_text_->size());
-		xtype_string("[ ERROR ]: Too long arg or functio name");
+		do_backspace(_current_function_name_.size() + _current_function_arg_.size());
+		xtype_string("[ ERROR ]: Too long arg or function name");
+        reset_handling();
+		return;
 	}
-	else if (!is_special())
-		*_current_text_ += key_value;
+	*_current_text_ += key_value;
 }

@@ -18,12 +18,13 @@
 static int _special_keys_recorded_ = 0;
 static int _enter_code_ = 0;
 
-static const std::array<std::string, 6> _special_keys_names_{ "ENTER",
+static const std::array<std::string, 7> _special_keys_names_{ "ENTER",
 	"CAPSLOCK",
 	"LEFT_SHIFT",
 	"RIGHT_SHIFT",
 	"ALTGR",
-	"BACKSPACE" };
+	"BACKSPACE",
+	"SPACE" };
 
 static std::string get_line(std::string name)
 {
@@ -71,9 +72,9 @@ static void save_special_key(int code)
 	save_key(special_key);
 	ELogger::log("Key code " + key_name + " is now " + std::to_string(code));
 
-	if (_special_keys_recorded_ < 6)
+	if (_special_keys_recorded_ < 7)
 		ELogger::log("Now, Type " + _special_keys_names_.at(_special_keys_recorded_));
-	else if (_special_keys_recorded_ == 6)
+	else if (_special_keys_recorded_ == 7)
 	{
 		ELogger::log("Now type any keys to record(avoid typing the same key twice)");
 		ELogger::log("To stop recording, just leave a normal value empty");

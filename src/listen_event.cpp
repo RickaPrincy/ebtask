@@ -22,6 +22,7 @@ ECallBack::ReadFunction listen_event()
 
 		if (handle_mode())
 			return false;
+
 		if (status != KeyStatus::PRESSED)
 			return false;
 
