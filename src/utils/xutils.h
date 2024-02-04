@@ -12,6 +12,9 @@ void execute_and_copy(const std::string &command);
 
 // XDOTOOL
 void do_backspace(int repeat);
+void do_return();
+void do_tab();
+
 void execute_and_type(const std::string &command);
 void type_text_with_response(std::string text, int shortcut_lenth, bool is_error = false);
 void xtype_string(const std::string &text);

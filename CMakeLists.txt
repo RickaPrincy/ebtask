@@ -6,11 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 file(GLOB_RECURSE EBTASK_SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 
-# Find deps
-find_package(PkgConfig REQUIRED)
-
-pkg_check_modules(UDEV REQUIRED libudev)
-
 find_program(XCLIP_EXECUTABLE xclip)
 if(NOT XCLIP_EXECUTABLE)
     message(FATAL_ERROR "xclip not found. Please install it.")

@@ -54,14 +54,6 @@ void do_backspace(int repeat)
 	execute_command(command);
 }
 
-void type_text_with_response(std::string text, int shortcut_size, bool is_error)
-{
-	do_backspace(shortcut_size);
-	if (is_error)
-		text = "[ EROOR ]: " + text;
-	xtype_string(text);
-}
-
 void execute_and_copy(const std::string &command)
 {
 	copy_to_clipboard(execute_command(command));
@@ -70,4 +62,12 @@ void execute_and_copy(const std::string &command)
 void execute_and_type(const std::string &command)
 {
 	xtype_string(execute_command(command));
+}
+
+void do_return(){
+  execute_command("xdotool type --clearmodifiers Return");
+}
+
+void do_tab(){
+  execute_command("xdotool type --clearmodifiers Tab");
 }

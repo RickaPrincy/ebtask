@@ -18,7 +18,7 @@ static std::string _current_function_arg_ = "";
 static std::string *_current_text_ = &_current_function_name_;
 static const std::string ARG_NAME = "$arg";
 
-// TODO: Refactor all of thi code
+// TODO: Refactor all of this code
 static void execute_command_by_current_mode(const std::string &command)
 {
 	if (_current_mode_->_type == "xclip")
@@ -157,7 +157,7 @@ void handle_function(int code)
 		reset_handling();
 		return;
 	}
-	else if (_current_text_->size() > 50)
+	else if (_current_text_->size() > TEXT_LENTH_LIMIT)
 	{
 		do_backspace(_current_function_name_.size() + _current_function_arg_.size());
 		xtype_string("[ ERROR ]: Too long arg or function name");
