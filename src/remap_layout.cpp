@@ -35,7 +35,6 @@ static std::string get_line(std::string name)
 	return value;
 }
 
-// TODO: here is your last code bro (Have a nice day)
 static bool ask_key_information(int code)
 {
 	ELogger::log("The Keycode is " + std::to_string(code));

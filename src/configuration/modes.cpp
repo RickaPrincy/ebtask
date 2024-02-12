@@ -22,7 +22,10 @@ static const std::string ARG_NAME = "$arg";
 static void execute_command_by_current_mode(const std::string &command)
 {
 	if (_current_mode_->_type == "xclip")
+	{
 		execute_and_copy(command);
+		execute_and_type("echo \"C\"");
+	}
 	else if (_current_mode_->_type == "xdotool")
 		execute_and_type(command);
 	else

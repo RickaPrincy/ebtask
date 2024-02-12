@@ -24,7 +24,7 @@ std::string execute_command(const std::string &command)
 
 	if (!pipe)
 	{
-		throw std::runtime_error("Erreur lors de l'ouverture du pipe.");
+		throw std::runtime_error("Error when try to open pipe");
 	}
 
 	while (!feof(pipe.get()))
