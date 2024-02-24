@@ -7,7 +7,7 @@
 
 #define EBTASK_KEYS_CONF_NAME "ebtask.keys.json"
 #define EBTASK_CONF_NAME "ebtask.config.json"
-#define TEXT_LENTH_LIMIT 5000
+#define TEXT_LENGTH_LIMIT 5000
 
 void load_modes();
 void load_keys();

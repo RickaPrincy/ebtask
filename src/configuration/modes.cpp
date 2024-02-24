@@ -160,7 +160,7 @@ void handle_function(int code)
 		reset_handling();
 		return;
 	}
-	else if (_current_text_->size() > TEXT_LENTH_LIMIT)
+	else if (_current_text_->size() > TEXT_LENGTH_LIMIT)
 	{
 		do_backspace(_current_function_name_.size() + _current_function_arg_.size());
 		xtype_string("[ ERROR ]: Too long arg or function name");
