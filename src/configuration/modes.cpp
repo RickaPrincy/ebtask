@@ -51,6 +51,9 @@ void load_modes()
 			_new_mode_._name = mode["name"];
 			_new_mode_._type = mode["type"];
 			_new_mode_._is_function = mode["is_function"];
+			_new_mode_._render_command = mode["on_render"];
+			_new_mode_._unmount_command = mode["on_unmount"];
+
 			load_keybinding(mode, _new_mode_._keybinding);
 
 			for (auto action : mode["actions"])
@@ -78,6 +81,8 @@ void reset_handling()
 {
 	_current_function_name_ = _current_function_arg_ = "";
 	_current_text_ = &_current_function_name_;
+
+	execute_command(_current_mode_->_unmount_command);
 	_current_mode_ = nullptr;
 	ELogger::log("Back the NORMAL modes");
 }
@@ -89,6 +94,7 @@ bool handle_mode()
 		if (is_all_pressed(mode._keybinding))
 		{
 			_current_mode_ = &mode;
+			execute_command(_current_mode_->_render_command);
 			ELogger::log("Switch to " + mode._name + " mode");
 			return true;
 		}
