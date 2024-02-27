@@ -43,8 +43,8 @@ class Mode
 public:
 	std::vector<Action> _actions{};
 	std::vector<int> _keybinding{};
-	std::string _name{}, _type{}, _render_command{}, _unmount_command{};
-    bool _is_function{false};
+	std::string _name{""}, _type{""}, _render_command{""}, _unmount_command{""};
+    bool _is_function{false}, _log{true};
 	Mode(){};
 };
 

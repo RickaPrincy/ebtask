@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <iostream>
 #include <vector>
 
 #include "../utils/logger.h"
@@ -30,7 +29,9 @@ static void execute_command_by_current_mode(const std::string &command)
 		execute_and_type(command);
 	else
 		execute_command(command);
-	ELogger::log(command + " [ EXECUTED ]");
+
+	if (_current_mode_->_log)
+		ELogger::log(command + " [ EXECUTED ]");
 }
 
 void load_modes()
@@ -53,6 +54,7 @@ void load_modes()
 			_new_mode_._is_function = mode["is_function"];
 			_new_mode_._render_command = mode["on_render"];
 			_new_mode_._unmount_command = mode["on_unmount"];
+			_new_mode_._log = mode["log"];
 
 			load_keybinding(mode, _new_mode_._keybinding);
 
@@ -79,10 +81,12 @@ void load_modes()
 
 void reset_handling()
 {
+	if (_current_mode_ != nullptr)
+		execute_command(_current_mode_->_unmount_command);
+	execute_command(_current_mode_->_unmount_command);
 	_current_function_name_ = _current_function_arg_ = "";
 	_current_text_ = &_current_function_name_;
 
-	execute_command(_current_mode_->_unmount_command);
 	_current_mode_ = nullptr;
 	ELogger::log("Back the NORMAL modes");
 }
@@ -93,6 +97,8 @@ bool handle_mode()
 	{
 		if (is_all_pressed(mode._keybinding))
 		{
+			if (_current_mode_ != nullptr)
+				execute_command(_current_mode_->_unmount_command);
 			_current_mode_ = &mode;
 			execute_command(_current_mode_->_render_command);
 			ELogger::log("Switch to " + mode._name + " mode");
