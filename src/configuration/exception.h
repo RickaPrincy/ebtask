@@ -10,8 +10,7 @@ private:
 	std::string message_;
 
 public:
-	InvalidConfigurationError(
-		std::string message = "Your configuration is invalid, please read the docs")
+	InvalidConfigurationError(std::string message = "Your configuration is invalid, please read the docs")
 		: message_("_INVALID_CONFIGURATION_ERROR_ => " + message)
 	{
 	}

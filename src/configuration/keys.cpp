@@ -8,21 +8,7 @@
 
 using json = nlohmann::json;
 
-// backspace is quite special but not really xd
-static int _backspace_code_{ -1 }, _space_code_{ -1 };
-
-static bool _is_special_ = false;
-
-// to avoid a lot of query in the keys
-static std::unordered_map<std::string /*keyname*/, KeyStatus> _special_keys_{
-	{ "CAPSLOCK", KeyStatus::RELEASED },
-	{ "LEFT_SHIFT", KeyStatus::RELEASED },
-	{ "RIGHT_SHIFT", KeyStatus::RELEASED },
-	{ "ALTGR", KeyStatus::RELEASED }
-};
-
-// normal keys
-static std::unordered_map<int /*keycode*/, Key> _keys_{};
+std::unordered_map<int /*keycode*/, Key> _keys_{};
 
 void load_keys()
 {
@@ -39,11 +25,6 @@ void load_keys()
 			_new_key_._shift = key["shift"];
 			_new_key_._capslock = key["capslock"];
 			_keys_.insert(std::make_pair(_new_key_._code, _new_key_));
-
-			if (_new_key_._normal == "BACKSPACE")
-				_backspace_code_ = _new_key_._code;
-			else if (_new_key_._normal == "SPACE")
-				_space_code_ = _new_key_._code;
 		}
 	}
 	catch (json::exception error)
@@ -87,19 +68,8 @@ KeyStatus update_key_status(int code, KeyStatus status)
 {
 	if (_keys_.find(code) == _keys_.end())
 		return KeyStatus::NOT_FOUND;
-	Key &key = _keys_[code];
-	key._status = status;
-	std::string key_name = key._normal;
-
-	if (_special_keys_.find(key_name) != _special_keys_.end())
-	{
-		_special_keys_[key_name] = status;
-		_is_special_ = true;
-	}
-	else
-		_is_special_ = false;
-
-	return status;
+	_keys_[code]._status = status;
+    return status;
 }
 
 KeyStatus get_key_status(int code)
@@ -117,32 +87,4 @@ bool is_all_pressed(const std::vector<int> &keybinding)
 			return false;
 	}
 	return true;
-}
-
-bool is_backspace(int code)
-{
-	return _backspace_code_ == code;
-}
-
-bool is_space(int code)
-{
-	return _space_code_ == code;
-}
-
-bool is_special()
-{
-	return _is_special_;
-}
-
-// Used only after updating keys status and check if the key exist
-std::string get_value(int code)
-{
-	if (_special_keys_["CAPSLOCK"] == KeyStatus::PRESSED)
-		return _keys_[code]._capslock;
-	else if (_special_keys_["LEFT_SHIFT"] == KeyStatus::PRESSED ||
-			 _special_keys_["RIGHT_SHIFT"] == KeyStatus::PRESSED)
-		return _keys_[code]._shift;
-	else if (_special_keys_["ALTGR"] == KeyStatus::PRESSED)
-		return _keys_[code]._altgr;
-	return _keys_[code]._normal;
 }

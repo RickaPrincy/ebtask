@@ -7,19 +7,6 @@
 
 #include "json/json.hpp"
 
-static std::vector<std::string> split_command(std::string command, std::string delimiter)
-{
-	std::vector<std::string> res;
-	int pos = 0;
-	while (pos < command.size())
-	{
-		pos = command.find(delimiter);
-		res.push_back(command.substr(0, pos));
-		command.erase(0, pos + 3);
-	}
-	return res;
-}
-
 std::tuple<std::string, nlohmann::json> get_configuraton_content_with_path(std::string file_name,
 	bool is_required = false);
 std::string get_configuration_path();
