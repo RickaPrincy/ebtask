@@ -71,20 +71,38 @@ void ebtask::delete_folder(std::string path)
 	}
 }
 
-ebtask::PathExistErrorAction get_remap_error_action_value(std::string error_action_string)
-{
-	auto value = enum_error_action.find(error_action_string);
-	if (value != enum_error_action.end())
-	{
-		return value->second;
-	}
-	throw std::runtime_error("Valid error_action are [ OVERRIDE | COPY | ERROR ]");
-}
-
 std::string ebtask::get_dumb_unique_prefix()
 {
 	static int id = 0;
 	auto now = std::chrono::system_clock::now();
 	auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
 	return std::to_string(ms) + "_" + std::to_string(id++);
+}
+
+nlohmann::json ebtask::get_json_file_content(std::string path, bool required)
+{
+	std::ifstream config_file(path);
+	if (!config_file.is_open() && required)
+		throw std::runtime_error(path + " was not found");
+
+	nlohmann::json config_file_content = nlohmann::json::object();
+
+	try
+	{
+		if (config_file.is_open())
+			config_file_content = nlohmann::json::parse(config_file);
+	}
+	catch (const nlohmann::json::exception &error)
+	{
+		config_file.close();
+		throw std::runtime_error(path + " is not a valid json file");
+	}
+
+	config_file.close();
+	return config_file_content;
+}
+
+std::unordered_map<std::string, ebtask::PathExistErrorAction> ebtask::get_enum_string_path_error()
+{
+	return enum_error_action;
 }

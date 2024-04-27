@@ -3,16 +3,23 @@
 #include <string>
 #include <vector>
 
-#include "../../utils/fs_utils.hpp"
 #include "../ebtask_config.hpp"
 
 namespace ebtask
 {
+	using KeyBinding = std::vector<int>;
+
+	enum class ActionHandler
+	{
+		FUNCTION,
+		KEYBINDING
+	};
+
 	class Action
 	{
 	public:
-		std::vector<int> _keybinding{};
-		std::string _function{}, _command{};
+		ebtask::KeyBinding _keybinding{};
+		std::string _function{}, _command{}, _output_reader;
 		Action() = default;
 	};
 
@@ -20,17 +27,28 @@ namespace ebtask
 	{
 	public:
 		std::vector<Action> _actions{};
-		std::vector<int> _keybinding{};
-		std::string _name{}, _type{};
+		ebtask::KeyBinding _keybinding{};
+		std::string _name{}, _output_reader{}, _on_start{}, _on_stop{};
+		bool _log_action{ true };
+		ebtask::ActionHandler _hanlder_type;
 		Mode() = default;
 	};
 
 	class EbtaskConfig
 	{
 	public:
-		void read_config(std::string config_name = DEFAULT_CONFIG_FILE_NAME,
-			ebtask::PathExistErrorAction error_action = ebtask::PathExistErrorAction::ERROR);
+		ebtask::KeyBinding _normal_mode_keybinding{};
+		std::vector<Mode> _modes;
+
+		void save_config(std::string &file_config_path,
+			std::string error_action = "COPY");
+		static EbtaskConfig from_config_file(std::string file_config_path);
+		static EbtaskConfig generate_config_template();
+		EbtaskConfig() = default;
 	};
+
+	std::string handle_config_file_already_exist_error(std::string file_path,
+		std::string error_action);
 	std::string get_config_path();
 	std::string get_config_file_path(std::string file_name);
 }  // namespace ebtask
