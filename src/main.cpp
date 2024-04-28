@@ -13,8 +13,6 @@ int main(int argc, const char *argv[])
 {
 	rcli::App ebtask("ebtask", "Execute your command in background task easily", EBTASK_VERSION);
 	rcli::InputConfig input_config = rcli::InputConfig().required(true).clean(true);
-	rcli::ColorConfig color_config;
-	color_config.key = TColor::B_GREEN;
 
 	rcli::Option error_action_option("-e,--error-action",
 		"Specify what to do if file config already existed (enum: [ ERROR - COPY - OVERRIDE ])",
@@ -28,21 +26,23 @@ int main(int argc, const char *argv[])
 		"Remap a layout for your keyboard",
 		[&](rcli::Command *_remap)
 		{
-			auto layout_name = _remap->get_option_value("layout_name");
+			auto layout_name = _remap->get_option_value("name");
 			auto error_action = _remap->get_option_value("error_action");
 			auto devnode = _remap->get_option_value("devnode");
 
 			if (layout_name.empty())
 				layout_name = rcli::ask_input_value(input_config.text("Layout name"));
 
-			ebtask::run([&]() { return ebtask::remap_layout(layout_name, error_action); }, devnode);
+			ebtask::run([&]()
+				{ return ebtask::remap_layout(layout_name + LAYOUT_CONFIG_SUFFIX, error_action); },
+				devnode);
 		});
 	remap.add_option(&name_option);
 	remap.add_option(&devnode_option);
 	remap.add_option(&error_action_option);
 
 	// -----------------------------------------------------------------------------------
-	rcli::Command config("init-config",
+	rcli::Command config("init_config",
 		"init a new configuration",
 		[&](rcli::Command *_config)
 		{

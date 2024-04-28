@@ -85,7 +85,7 @@ nlohmann::json ebtask::get_json_file_content(std::string path, bool required)
 	if (!config_file.is_open() && required)
 		throw std::runtime_error(path + " was not found");
 
-	nlohmann::json config_file_content = nlohmann::json::object();
+	nlohmann::json config_file_content = nlohmann::json::object({});
 
 	try
 	{

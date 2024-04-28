@@ -32,7 +32,7 @@ void ebtask::read_input_file(const char *devnode, ebtask::ReaderFunction callbac
 		{
 			try
 			{
-				callback(ev.code, static_cast<KeyStatus>(ev.value), fd, devnode);
+				is_running = callback(ev.code, static_cast<KeyStatus>(ev.value), fd, devnode);
 			}
 			catch (const std::runtime_error &error)
 			{

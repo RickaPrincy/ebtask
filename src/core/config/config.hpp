@@ -3,8 +3,6 @@
 #include <string>
 #include <vector>
 
-#include "../ebtask_config.hpp"
-
 namespace ebtask
 {
 	using KeyBinding = std::vector<int>;
@@ -28,7 +26,7 @@ namespace ebtask
 	public:
 		std::vector<Action> _actions{};
 		ebtask::KeyBinding _keybinding{};
-		std::string _name{}, _output_reader{}, _on_start{}, _on_stop{};
+		std::string _name{}, _output_reader{}, _input_cleaner{}, _on_start{}, _on_stop{};
 		bool _log_action{ true };
 		ebtask::ActionHandler _hanlder_type;
 		Mode() = default;

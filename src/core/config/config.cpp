@@ -60,11 +60,12 @@ void ebtask::EbtaskConfig::save_config(std::string config_file_path)
 			mode._hanlder_type == ebtask::ActionHandler::FUNCTION ? "FUNCTION" : "KEY_BINDING";
 		new_mode["log_action"] = mode._log_action;
 		new_mode["keybinding"] = mode._keybinding;
+		new_mode["input_cleaner"] = mode._input_cleaner;
 
 		if (!mode._on_stop.empty())
 			new_mode["on_stop"] = mode._on_stop;
 		if (!mode._on_start.empty())
-			new_mode["_on_start"] = mode._on_start;
+			new_mode["on_start"] = mode._on_start;
 		if (!mode._output_reader.empty())
 			new_mode["output_reader"] = mode._output_reader;
 
@@ -92,11 +93,13 @@ ebtask::EbtaskConfig ebtask::EbtaskConfig::generate_config_template()
 	ebtask::Action say_hello_action;
 	say_hello_action._function = "sayHello";
 	say_hello_action._command = "echo \"Hello $input\"";
-	say_hello_action._output_reader = "XDOTOOL";
+	say_hello_action._output_reader = "@XDOTOOL";
 
 	ebtask::Mode example_mode;
 	example_mode._actions.push_back(say_hello_action);
+	example_mode._hanlder_type = ebtask::ActionHandler::FUNCTION;
 	example_mode._keybinding = { 42, 54 };
+	example_mode._input_cleaner = "@XDOTOOL";
 	example_mode._name = "example";
 
 	config._normal_mode_keybinding = { 1, 42 };
@@ -158,6 +161,9 @@ ebtask::EbtaskConfig ebtask::EbtaskConfig::from_config_file(std::string file_con
 std::string ebtask::handle_config_file_already_exist_error(std::string file_name,
 	std::string error_action)
 {
+	if (error_action.empty())
+		error_action = "ERROR";
+
 	auto enum_error_action = ebtask::get_enum_string_path_error();
 	auto error = enum_error_action.find(error_action);
 	std::string file_path = ebtask::get_config_file_path(file_name);
@@ -165,15 +171,12 @@ std::string ebtask::handle_config_file_already_exist_error(std::string file_name
 	if (!fs::exists(file_path))
 		return file_name;
 
-	if (error != enum_error_action.end() && fs::exists(file_path) &&
-		(error_action.empty() || error->second == ebtask::PathExistErrorAction::ERROR))
-	{
-		throw std::runtime_error(
-			file_path + " already exists, use --error-action to specify what to do");
-	}
-
 	if (error == enum_error_action.end())
 		throw std::runtime_error("Valid error_action are [ OVERRIDE | COPY | ERROR ]");
+
+	if (fs::exists(file_path) && error->second == ebtask::PathExistErrorAction::ERROR)
+		throw std::runtime_error(
+			file_path + " already exists, use --error-action to specify what to do");
 
 	if (!fs::is_regular_file(file_path))
 		throw std::runtime_error(file_path + " is not a valid layout config file");
