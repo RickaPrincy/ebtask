@@ -1,10 +1,10 @@
+#include <TColor/TColor.hpp>
 #include <rcli/option.hpp>
 #include <rcli/rcli.hpp>
 #include <stdexcept>
 #include <string>
 
 #include "core/actions/actions.hpp"
-#include "core/config/config.hpp"
 #include "core/ebtask_config.hpp"
 #include "core/run.hpp"
 #include "utils/logger.hpp"
@@ -13,10 +13,15 @@ int main(int argc, const char *argv[])
 {
 	rcli::App ebtask("ebtask", "Execute your command in background task easily", EBTASK_VERSION);
 	rcli::InputConfig input_config = rcli::InputConfig().required(true).clean(true);
+	rcli::ColorConfig color_config;
+	color_config.key = TColor::B_GREEN;
+
 	rcli::Option error_action_option("-e,--error-action",
-		"Specify what to do if layout already existed (enum: [ ERROR - COPY - OVERRIDE ])",
+		"Specify what to do if file config already existed (enum: [ ERROR - COPY - OVERRIDE ])",
 		"error_action");
 	rcli::Option name_option("-n,--name", "Specify new name", "name");
+	rcli::Option devnode_option(
+		"-i,--input-event", "Specify new input event on your os", "devnode");
 
 	// -----------------------------------------------------------------------------------
 	rcli::Command remap("remap_layout",
@@ -24,18 +29,17 @@ int main(int argc, const char *argv[])
 		[&](rcli::Command *_remap)
 		{
 			auto layout_name = _remap->get_option_value("layout_name");
-			const auto error_action = _remap->get_option_value("error_action");
+			auto error_action = _remap->get_option_value("error_action");
+			auto devnode = _remap->get_option_value("devnode");
 
 			if (layout_name.empty())
 				layout_name = rcli::ask_input_value(input_config.text("Layout name"));
 
-			if (error_action.empty())
-				ebtask::run([&]() { return ebtask::remap_layout(layout_name); });
-			else
-				ebtask::run([&]() { return ebtask::remap_layout(layout_name, error_action); });
+			ebtask::run([&]() { return ebtask::remap_layout(layout_name, error_action); }, devnode);
 		});
-	remap.add_option(&error_action_option);
 	remap.add_option(&name_option);
+	remap.add_option(&devnode_option);
+	remap.add_option(&error_action_option);
 
 	// -----------------------------------------------------------------------------------
 	rcli::Command config("init-config",
@@ -47,16 +51,16 @@ int main(int argc, const char *argv[])
 
 			if (name.empty())
 				name = DEFAULT_CONFIG_FILE_NAME;
-			ebtask::EbtaskConfig new_config = ebtask::EbtaskConfig::generate_config_template();
-			new_config.save_config(name, error_action);
-			ebtask::log(ebtask::get_config_file_path(name) + " was genereated !!");
+
+			ebtask::generate_config(name + CONFIG_SUFFIX, error_action);
 		});
-	config.add_option(&error_action_option);
 	config.add_option(&name_option);
+	config.add_option(&error_action_option);
 
 	// -----------------------------------------------------------------------------------
 	ebtask.add_subcommand(&remap);
 	ebtask.add_subcommand(&config);
+
 	try
 	{
 		ebtask.run(argc, argv);

@@ -29,7 +29,7 @@ void ebtask::save_json_file(std::string path, const nlohmann::json &text)
 	std::ofstream file(path);
 	if (file.is_open())
 	{
-		file << text.dump(4);
+		file << text.dump(2);
 		return;
 	}
 	throw std::runtime_error("Cannot save " + path);

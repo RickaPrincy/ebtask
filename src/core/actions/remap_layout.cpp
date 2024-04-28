@@ -12,9 +12,9 @@ static const rcli::InputConfig input_config = rcli::InputConfig().clean(true).re
 // To retrieve one by one user's layout
 ebtask::ReaderFunction ebtask::remap_layout(std::string layout_name, std::string error_action)
 {
-	std::string layout_filename = layout_name + ".layout.json";
+	std::string layout_filename = layout_name + LAYOUT_CONFIG_SUFFIX;
 	layout_filename = ebtask::handle_config_file_already_exist_error(layout_name, error_action);
 
 	return [](int code, ebtask::KeyStatus status, const int& fd, const char* devnode)
-	{ std::cout << "status: " << std::endl; };
+	{ std::cout << "code: " << code << std::endl; };
 }

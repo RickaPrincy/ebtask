@@ -8,12 +8,13 @@ set(EBTASK_VERSION ${PROJECT_VERSION})
 
 set(EBTASK_SOURCES
     src/main.cpp
-    src/run.cpp
-    src/utils/fs_utils.cpp
+    src/core/run.cpp
     src/core/config/config.cpp
+    src/core/actions/generate_config.cpp
+    src/core/actions/remap_layout.cpp
     src/core/os_inputs/guess_input_file.cpp
     src/core/os_inputs/read_input_file.cpp
-    src/core/actions/remap_layout.cpp)
+    src/utils/fs_utils.cpp)
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/ebtask_config.hpp.in"
                "${CMAKE_CURRENT_SOURCE_DIR}/src/core/ebtask_config.hpp")

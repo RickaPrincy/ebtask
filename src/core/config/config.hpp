@@ -40,8 +40,7 @@ namespace ebtask
 		ebtask::KeyBinding _normal_mode_keybinding{};
 		std::vector<Mode> _modes;
 
-		void save_config(std::string &file_config_path,
-			std::string error_action = "COPY");
+		void save_config(std::string file_config_path);
 		static EbtaskConfig from_config_file(std::string file_config_path);
 		static EbtaskConfig generate_config_template();
 		EbtaskConfig() = default;

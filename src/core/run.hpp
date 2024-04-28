@@ -7,7 +7,5 @@
 namespace ebtask
 {
 	using RunnerFunction = std::function<ebtask::ReaderFunction()>;
-	void run(ebtask::RunnerFunction runner_funnction, std::string devnode);
-	void run(ebtask::RunnerFunction runner_funnction);
-
+	void run(ebtask::RunnerFunction runner_funnction, std::string devnode = "");
 }  // namespace ebtask
