@@ -17,7 +17,7 @@ namespace ebtask
 	{
 	public:
 		ebtask::KeyBinding _keybinding{};
-		std::string _function{}, _command{}, _output_reader;
+		std::string _function{}, _command{};
 		Action() = default;
 	};
 
@@ -28,7 +28,7 @@ namespace ebtask
 		ebtask::KeyBinding _keybinding{};
 		std::string _name{}, _output_reader{}, _input_cleaner{}, _on_start{}, _on_stop{};
 		bool _log_action{ true };
-		ebtask::ActionHandler _hanlder_type;
+		ebtask::ActionHandler _handler_type;
 		Mode() = default;
 	};
 

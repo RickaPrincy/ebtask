@@ -122,7 +122,7 @@ static void handle_action(int code)
 	if (_CURRENT_MODE_ == nullptr)
 		return;
 
-	if (_CURRENT_MODE_->_hanlder_type == ebtask::ActionHandler::FUNCTION)
+	if (_CURRENT_MODE_->_handler_type == ebtask::ActionHandler::FUNCTION)
 	{
 		handle_function(code);
 		return;
@@ -130,7 +130,7 @@ static void handle_action(int code)
 
 	for (const auto& action : _CURRENT_MODE_->_actions)
 	{
-		if (!(_CURRENT_MODE_->_hanlder_type == ebtask::ActionHandler::FUNCTION) &&
+		if (!(_CURRENT_MODE_->_handler_type == ebtask::ActionHandler::FUNCTION) &&
 			ebtask::is_all_pressed(action._keybinding))
 		{
 			execute_command_by_current_mode(action._command);

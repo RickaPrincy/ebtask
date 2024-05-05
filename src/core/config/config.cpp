@@ -1,5 +1,6 @@
 #include "config.hpp"
 
+#include <iostream>
 #include <json/json.hpp>
 #include <stdexcept>
 #include <unordered_map>
@@ -56,8 +57,8 @@ void ebtask::EbtaskConfig::save_config(std::string config_file_path)
 	{
 		json new_mode;
 		new_mode["name"] = mode._name;
-		new_mode["hanlder_type"] =
-			mode._hanlder_type == ebtask::ActionHandler::FUNCTION ? "FUNCTION" : "KEY_BINDING";
+		new_mode["handler_type"] =
+			mode._handler_type == ebtask::ActionHandler::FUNCTION ? "FUNCTION" : "KEY_BINDING";
 		new_mode["log_action"] = mode._log_action;
 		new_mode["keybinding"] = mode._keybinding;
 		new_mode["input_cleaner"] = mode._input_cleaner;
@@ -73,8 +74,7 @@ void ebtask::EbtaskConfig::save_config(std::string config_file_path)
 		{
 			json new_action;
 			new_action["command"] = action._command;
-			new_action["output_reader"] = action._output_reader;
-			if (mode._hanlder_type == ebtask::ActionHandler::FUNCTION)
+			if (mode._handler_type == ebtask::ActionHandler::FUNCTION)
 				new_action["function"] = action._function;
 			else
 				new_action["keybinding"] = action._keybinding;
@@ -93,12 +93,12 @@ ebtask::EbtaskConfig ebtask::EbtaskConfig::generate_config_template()
 	ebtask::Action say_hello_action;
 	say_hello_action._function = "sayHello";
 	say_hello_action._command = "echo \"Hello $input\"";
-	say_hello_action._output_reader = "@XDOTOOL";
 
 	ebtask::Mode example_mode;
 	example_mode._actions.push_back(say_hello_action);
-	example_mode._hanlder_type = ebtask::ActionHandler::FUNCTION;
+	example_mode._handler_type = ebtask::ActionHandler::FUNCTION;
 	example_mode._keybinding = { 42, 54 };
+	example_mode._output_reader = "@XDOTOOL";
 	example_mode._input_cleaner = "@XDOTOOL";
 	example_mode._name = "example";
 
@@ -111,7 +111,6 @@ ebtask::EbtaskConfig ebtask::EbtaskConfig::from_config_file(std::string file_con
 {
 	ebtask::EbtaskConfig config;
 	nlohmann::json file_content = ebtask::get_json_file_content(file_config_path, true);
-
 	try
 	{
 		load_keybinding(file_content, config._normal_mode_keybinding, "normal_mode_keybinding");
@@ -119,29 +118,26 @@ ebtask::EbtaskConfig ebtask::EbtaskConfig::from_config_file(std::string file_con
 		{
 			ebtask::Mode new_mode;
 			new_mode._name = mode["name"];
-			new_mode._hanlder_type = get_action_handler_type(mode["handler_type"]);
+			new_mode._handler_type = get_action_handler_type(mode["handler_type"]);
 			load_keybinding(mode, new_mode._keybinding, "keybinding");
 
-			if (!mode["on_stop"].is_null())
+			if (mode.contains("on_stop"))
 				new_mode._on_stop = mode["on_stop"];
-			if (!mode["on_start"].is_null())
-				new_mode._on_stop = mode["on_start"];
-			if (!mode["log_action"].is_null())
+			if (mode.contains("on_start"))
+				new_mode._on_start = mode["on_start"];
+			if (mode.contains("log_action"))
 				new_mode._log_action = mode["log_action"];
-			if (!mode["output_reader"].is_null())
+			if (mode.contains("output_reader"))
 				new_mode._output_reader = mode["output_reader"];
+			if (mode.contains("input_cleaner"))
+				new_mode._input_cleaner = mode["input_cleaner"];
 
 			for (const auto &action : mode["actions"])
 			{
 				ebtask::Action new_action;
 				new_action._command = action["command"];
 
-				if (action["output_reader"].is_null())
-					new_action._output_reader = action["output_reader"];
-				if (new_action._output_reader.empty())
-					new_action._output_reader = new_mode._output_reader;
-
-				if (new_mode._hanlder_type == ebtask::ActionHandler::FUNCTION)
+				if (new_mode._handler_type == ebtask::ActionHandler::FUNCTION)
 					new_action._function = action["function"];
 				else
 					load_keybinding(action, new_action._keybinding, "keybinding");
