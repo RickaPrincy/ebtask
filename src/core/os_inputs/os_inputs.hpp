@@ -7,6 +7,7 @@ namespace ebtask
 {
 	enum class KeyStatus
 	{
+		NOT_FOUND = -1,
 		RELEASED = 0,
 		PRESSED = 1,
 		REPEATED = 2

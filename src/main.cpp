@@ -58,8 +58,36 @@ int main(int argc, const char *argv[])
 	config.add_option(&error_action_option);
 
 	// -----------------------------------------------------------------------------------
+	rcli::Command listen("listen",
+		"Start ebtask",
+		[&](rcli::Command *_listen)
+		{
+			auto layout_name = _listen->get_option_value("layout_name");
+			auto config_name = _listen->get_option_value("config_name");
+			auto devnode = _listen->get_option_value("devnode");
+
+			if (layout_name.empty())
+				layout_name = DEFAULT_CONFIG_FILE_NAME;
+
+			if (config_name.empty())
+				config_name = DEFAULT_CONFIG_FILE_NAME;
+			ebtask::run(
+				[&]() {
+					return ebtask::listen_event(
+						layout_name + LAYOUT_CONFIG_SUFFIX, config_name + CONFIG_SUFFIX);
+				},
+				devnode);
+		});
+	listen.add_option(
+		"-l,--layout", "Specify layout to use (only name without .layout.json)", "layout_name");
+	listen.add_option(
+		"-c,--config", "Specify config to use (only name without .config.json)", "config_name");
+	listen.add_option(&devnode_option);
+
+	// -----------------------------------------------------------------------------------
 	ebtask.add_subcommand(&remap);
 	ebtask.add_subcommand(&config);
+	ebtask.add_subcommand(&listen);
 
 	try
 	{

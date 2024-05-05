@@ -6,9 +6,8 @@
 
 namespace ebtask
 {
-	ebtask::ReaderFunction remap_layout(std::string layout_name,
-		std::string error_action);
+	ebtask::ReaderFunction remap_layout(std::string layout_name, std::string error_action);
 	void generate_config(std::string config_name, std::string error_action);
-	ebtask::ReaderFunction listen_event();
+	ebtask::ReaderFunction listen_event(std::string layout_name, std::string config_name);
 
 }  // namespace ebtask
