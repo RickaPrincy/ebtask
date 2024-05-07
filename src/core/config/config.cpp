@@ -1,6 +1,5 @@
 #include "config.hpp"
 
-#include <iostream>
 #include <json/json.hpp>
 #include <stdexcept>
 #include <unordered_map>
@@ -9,6 +8,18 @@
 #include "../../utils/logger.hpp"
 #include "../ebtask_config.hpp"
 
+// JUST TO TRY MACRO A LIT BIT
+#define AFFECT_DATA_TO_JSON(json, obj, field) ((json)[#field] = (obj).field)
+#define READ_KEYBIND(json, obj, field) ((obj).field = (json)[#field].get<ebtask::KeyBinding>())
+#define READ_JSON_DATA(json, obj, field) ((obj).field = (json)[#field])
+
+#define READ_OPTIONAL_JSON_DATA(json, obj, field) \
+	if ((json).contains(#field))                  \
+	READ_JSON_DATA(json, obj, field)
+
+namespace fs = std::filesystem;
+using json = nlohmann::json;
+
 const static char *EBTASK_CONFIG_VALUE = std::getenv(EBTASK_PATH_ENV);
 const static std::string FILE_PATH_SEPARATOR = "/";	 // as ebtask is only for unix system
 const static std::unordered_map<std::string, ebtask::ActionHandler> enum_hanlder = {
@@ -16,8 +27,14 @@ const static std::unordered_map<std::string, ebtask::ActionHandler> enum_hanlder
 	{ "KEY_BINDING", ebtask::ActionHandler::FUNCTION }
 };
 
-namespace fs = std::filesystem;
-using json = nlohmann::json;
+static ebtask::ActionHandler get_action_handler_type(std::string handler)
+{
+	auto value = enum_hanlder.find(handler);
+	if (value == enum_hanlder.end())
+		throw std::runtime_error(
+			"Action handler type not valid (enum: [ FUNCTION | KEY_BINDING ])");
+	return value->second;
+}
 
 std::string ebtask::get_config_path()
 {
@@ -31,119 +48,108 @@ std::string ebtask::get_config_file_path(std::string file_name)
 	return ebtask::get_config_path() + FILE_PATH_SEPARATOR + file_name;
 }
 
-static void load_keybinding(const json &json_objet, ebtask::KeyBinding &target, std::string key)
+ebtask::EbtaskConfig ebtask::EbtaskConfig::generate_new_config_template()
 {
-	for (auto keybinding : json_objet[key])
-	{
-		target.push_back(keybinding);
-	}
-}
+	ebtask::EbtaskConfig config;
+	ebtask::Action say_hello_action;
+	say_hello_action.function = "sayHello";
+	say_hello_action.command = "echo \"Hello $INPUT\"";
 
-static ebtask::ActionHandler get_action_handler_type(std::string handler)
-{
-	auto value = enum_hanlder.find(handler);
-	if (value == enum_hanlder.end())
-		throw std::runtime_error(
-			"Action handler type not valid (enum: [ FUNCTION | KEY_BINDING ])");
-	return value->second;
+	ebtask::Mode example_mode;
+	example_mode.actions.push_back(say_hello_action);
+	example_mode.handler_type = ebtask::ActionHandler::FUNCTION;
+	example_mode.keybinding = { 42, 54 };
+	example_mode.output_reader = "@XDOTOOL_TYPE";
+	example_mode.input_cleaner = "@XDOTOOL_ERASE";
+	example_mode.name = "example";
+
+	config.normal_mode_keybinding = { 1, 42 };
+	config.alias = { { "@XDOTOOL_TYPE", "xdotool type \"$OUTPUT\"" },
+		{ "@XCLIP_COPY", "echo \"$OUTPUT\" | xclip -selection clipboard" },
+		{ "@XDOTOOL_ERASE", "xdotool key --clearmodifiers --repeat $INPUT_SIZE BackSpace" } };
+
+	config.modes.push_back(example_mode);
+	return config;
 }
 
 void ebtask::EbtaskConfig::save_config(std::string config_file_path)
 {
 	json config_json = json::object();
 	json modes_json = json::array();
-	config_json["normal_mode_keybinding"] = this->_normal_mode_keybinding;
-	for (const auto &mode : this->_modes)
+	json alias = json::array();
+
+	for (const auto &[name, value] : this->alias)
+		alias.push_back({ { "name", name }, { "value", value } });
+
+	for (const auto &mode : this->modes)
 	{
 		json new_mode;
-		new_mode["name"] = mode._name;
+		AFFECT_DATA_TO_JSON(new_mode, mode, name);
 		new_mode["handler_type"] =
-			mode._handler_type == ebtask::ActionHandler::FUNCTION ? "FUNCTION" : "KEY_BINDING";
-		new_mode["log_action"] = mode._log_action;
-		new_mode["keybinding"] = mode._keybinding;
-		new_mode["input_cleaner"] = mode._input_cleaner;
+			mode.handler_type == ebtask::ActionHandler::FUNCTION ? "FUNCTION" : "KEY_BINDING";
+		AFFECT_DATA_TO_JSON(new_mode, mode, log_action);
+		AFFECT_DATA_TO_JSON(new_mode, mode, keybinding);
+		AFFECT_DATA_TO_JSON(new_mode, mode, input_cleaner);
+		AFFECT_DATA_TO_JSON(new_mode, mode, output_reader);
+		AFFECT_DATA_TO_JSON(new_mode, mode, on_stop);
+		AFFECT_DATA_TO_JSON(new_mode, mode, on_start);
 
-		if (!mode._on_stop.empty())
-			new_mode["on_stop"] = mode._on_stop;
-		if (!mode._on_start.empty())
-			new_mode["on_start"] = mode._on_start;
-		if (!mode._output_reader.empty())
-			new_mode["output_reader"] = mode._output_reader;
-
-		for (const auto &action : mode._actions)
+		for (const auto &action : mode.actions)
 		{
 			json new_action;
-			new_action["command"] = action._command;
-			if (mode._handler_type == ebtask::ActionHandler::FUNCTION)
-				new_action["function"] = action._function;
+			AFFECT_DATA_TO_JSON(new_action, action, command);
+			if (mode.handler_type == ebtask::ActionHandler::FUNCTION)
+				AFFECT_DATA_TO_JSON(new_action, action, function);
 			else
-				new_action["keybinding"] = action._keybinding;
+				AFFECT_DATA_TO_JSON(new_action, action, keybinding);
 			new_mode["actions"].push_back(new_action);
 		}
 		modes_json.push_back(new_mode);
 	}
 
+	config_json["alias"] = alias;
 	config_json["modes"] = modes_json;
+	AFFECT_DATA_TO_JSON(config_json, *this, normal_mode_keybinding);
 	ebtask::save_json_file(config_file_path, config_json);
 }
 
-ebtask::EbtaskConfig ebtask::EbtaskConfig::generate_config_template()
-{
-	ebtask::EbtaskConfig config;
-	ebtask::Action say_hello_action;
-	say_hello_action._function = "sayHello";
-	say_hello_action._command = "echo \"Hello $input\"";
-
-	ebtask::Mode example_mode;
-	example_mode._actions.push_back(say_hello_action);
-	example_mode._handler_type = ebtask::ActionHandler::FUNCTION;
-	example_mode._keybinding = { 42, 54 };
-	example_mode._output_reader = "@XDOTOOL";
-	example_mode._input_cleaner = "@XDOTOOL";
-	example_mode._name = "example";
-
-	config._normal_mode_keybinding = { 1, 42 };
-	config._modes.push_back(example_mode);
-	return config;
-}
-
-ebtask::EbtaskConfig ebtask::EbtaskConfig::from_config_file(std::string file_config_path)
+ebtask::EbtaskConfig ebtask::EbtaskConfig::get_config_from_config_file(std::string file_config_path)
 {
 	ebtask::EbtaskConfig config;
 	nlohmann::json file_content = ebtask::get_json_file_content(file_config_path, true);
+
 	try
 	{
-		load_keybinding(file_content, config._normal_mode_keybinding, "normal_mode_keybinding");
+		READ_KEYBIND(file_content, config, normal_mode_keybinding);
+
+		for (const auto &alias : file_content["alias"])
+			config.alias.insert(
+				{ alias["name"].get<std::string>(), alias["value"].get<std::string>() });
+
 		for (const auto &mode : file_content["modes"])
 		{
 			ebtask::Mode new_mode;
-			new_mode._name = mode["name"];
-			new_mode._handler_type = get_action_handler_type(mode["handler_type"]);
-			load_keybinding(mode, new_mode._keybinding, "keybinding");
-
-			if (mode.contains("on_stop"))
-				new_mode._on_stop = mode["on_stop"];
-			if (mode.contains("on_start"))
-				new_mode._on_start = mode["on_start"];
-			if (mode.contains("log_action"))
-				new_mode._log_action = mode["log_action"];
-			if (mode.contains("output_reader"))
-				new_mode._output_reader = mode["output_reader"];
-			if (mode.contains("input_cleaner"))
-				new_mode._input_cleaner = mode["input_cleaner"];
+			READ_JSON_DATA(mode, new_mode, name);
+			READ_KEYBIND(mode, new_mode, keybinding);
+			READ_OPTIONAL_JSON_DATA(mode, new_mode, on_stop);
+			READ_OPTIONAL_JSON_DATA(mode, new_mode, on_start);
+			READ_OPTIONAL_JSON_DATA(mode, new_mode, log_action);
+			READ_OPTIONAL_JSON_DATA(mode, new_mode, output_reader);
+			READ_OPTIONAL_JSON_DATA(mode, new_mode, input_cleaner);
+			new_mode.handler_type = get_action_handler_type(mode["handler_type"]);
 
 			for (const auto &action : mode["actions"])
 			{
 				ebtask::Action new_action;
-				new_action._command = action["command"];
+				READ_JSON_DATA(action, new_action, command);
 
-				if (new_mode._handler_type == ebtask::ActionHandler::FUNCTION)
-					new_action._function = action["function"];
+				if (new_mode.handler_type == ebtask::ActionHandler::FUNCTION)
+					READ_JSON_DATA(action, new_action, function);
 				else
-					load_keybinding(action, new_action._keybinding, "keybinding");
-				new_mode._actions.push_back(new_action);
+					READ_KEYBIND(action, new_action, keybinding);
+				new_mode.actions.push_back(new_action);
 			}
-			config._modes.push_back(new_mode);
+			config.modes.push_back(new_mode);
 		}
 	}
 	catch (const nlohmann::json::exception &error)

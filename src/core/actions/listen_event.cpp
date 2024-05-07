@@ -20,24 +20,24 @@ static const int TEXT_LENGTH_LIMIT = 5000;
 // /!\ TODO: refactor
 static void execute_command_by_current_mode(const std::string& command)
 {
-	if (_CURRENT_MODE_->_output_reader == "@XCLIP")
+	if (_CURRENT_MODE_->output_reader == "@XCLIP")
 	{
 		ebtask::execute_and_copy(command);
 		ebtask::execute_and_type("echo \"C\"");
 	}
-	else if (_CURRENT_MODE_->_output_reader == "@XDOTOOL")
+	else if (_CURRENT_MODE_->output_reader == "@XDOTOOL")
 		ebtask::execute_and_type(command);
 	else
 		ebtask::execute_command(command);
 
-	if (_CURRENT_MODE_->_log_action)
+	if (_CURRENT_MODE_->log_action)
 		ebtask::log(command + " [ EXECUTED ]");
 }
 
 static void reset_handling()
 {
 	if (_CURRENT_MODE_ != nullptr)
-		ebtask::execute_command(_CURRENT_MODE_->_on_stop);
+		ebtask::execute_command(_CURRENT_MODE_->on_stop);
 	_CURRENT_FUNCTION_NAME_ = _CURRENT_FUNCTION_ARG_ = "";
 	_CURRENT_TEXT_ = &_CURRENT_FUNCTION_NAME_;
 
@@ -47,12 +47,12 @@ static void reset_handling()
 
 static bool handle_mode()
 {
-	for (const auto& mode : ebtask_config._modes)
+	for (const auto& mode : ebtask_config.modes)
 	{
-		if (ebtask::is_all_pressed(mode._keybinding))
+		if (ebtask::is_all_pressed(mode.keybinding))
 		{
 			if (_CURRENT_MODE_ != nullptr)
-				ebtask::execute_command(_CURRENT_MODE_->_on_stop);
+				ebtask::execute_command(_CURRENT_MODE_->on_stop);
 			_CURRENT_MODE_ = &mode;
 			return true;
 		}
@@ -86,19 +86,20 @@ static void handle_function(int code)
 	}
 	else if (key_value == ")")
 	{
-		ebtask::execute_command(_CURRENT_MODE_->_input_cleaner);
+		ebtask::execute_command(_CURRENT_MODE_->input_cleaner);
 		ebtask::do_backspace(_CURRENT_FUNCTION_NAME_.size() + _CURRENT_FUNCTION_ARG_.size() + 2);
-		auto action = std::find_if(_CURRENT_MODE_->_actions.begin(),
-			_CURRENT_MODE_->_actions.end(),
-			[&](const auto& _action) { return _action._function == _CURRENT_FUNCTION_NAME_; });
-		if (action == _CURRENT_MODE_->_actions.end())
+		auto action = std::find_if(_CURRENT_MODE_->actions.begin(),
+			_CURRENT_MODE_->actions.end(),
+			[&](const auto& _action) { return _action.function == _CURRENT_FUNCTION_NAME_; });
+
+		if (action == _CURRENT_MODE_->actions.end())
 		{
 			ebtask::xtype_string("[ERROR] : Function not found");
 			reset_handling();
 			return;
 		}
 
-		std::string command_with_arg = action->_command;
+		std::string command_with_arg = action->command;
 		size_t found = command_with_arg.find(ARG_NAME);
 		if (found != std::string::npos)
 			command_with_arg.replace(found, ARG_NAME.length(), _CURRENT_FUNCTION_ARG_);
@@ -122,18 +123,18 @@ static void handle_action(int code)
 	if (_CURRENT_MODE_ == nullptr)
 		return;
 
-	if (_CURRENT_MODE_->_handler_type == ebtask::ActionHandler::FUNCTION)
+	if (_CURRENT_MODE_->handler_type == ebtask::ActionHandler::FUNCTION)
 	{
 		handle_function(code);
 		return;
 	}
 
-	for (const auto& action : _CURRENT_MODE_->_actions)
+	for (const auto& action : _CURRENT_MODE_->actions)
 	{
-		if (!(_CURRENT_MODE_->_handler_type == ebtask::ActionHandler::FUNCTION) &&
-			ebtask::is_all_pressed(action._keybinding))
+		if (!(_CURRENT_MODE_->handler_type == ebtask::ActionHandler::FUNCTION) &&
+			ebtask::is_all_pressed(action.keybinding))
 		{
-			execute_command_by_current_mode(action._command);
+			execute_command_by_current_mode(action.command);
 		}
 	}
 }
@@ -146,7 +147,7 @@ ebtask::ReaderFunction ebtask::listen_event(std::string layout_name, std::string
 	ebtask::log("Loading " + layout_path + "...");
 	ebtask::load_layout(layout_path);
 	ebtask::log("Loading " + config_path + "...");
-	ebtask_config = ebtask::EbtaskConfig::from_config_file(config_path);
+	ebtask_config = ebtask::EbtaskConfig::get_config_from_config_file(config_path);
 
 	return [&](int code, ebtask::KeyStatus status, int& fd, const char* devnode)
 	{

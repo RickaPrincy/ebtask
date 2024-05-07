@@ -12,7 +12,7 @@ void ebtask::generate_config(std::string config_name, std::string error_action)
 
 	if (is_new_file)
 	{
-		ebtask::EbtaskConfig new_config = ebtask::EbtaskConfig::generate_config_template();
+		ebtask::EbtaskConfig new_config = ebtask::EbtaskConfig::generate_new_config_template();
 		new_config.save_config(config_path);
 	}
 

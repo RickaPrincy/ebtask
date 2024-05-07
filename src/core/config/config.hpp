@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -16,31 +17,33 @@ namespace ebtask
 	class Action
 	{
 	public:
-		ebtask::KeyBinding _keybinding{};
-		std::string _function{}, _command{};
+		ebtask::KeyBinding keybinding{};
+		std::string function{}, command{};
 		Action() = default;
 	};
 
 	class Mode
 	{
 	public:
-		std::vector<Action> _actions{};
-		ebtask::KeyBinding _keybinding{};
-		std::string _name{}, _output_reader{}, _input_cleaner{}, _on_start{}, _on_stop{};
-		bool _log_action{ true };
-		ebtask::ActionHandler _handler_type;
+		std::vector<Action> actions{};
+		ebtask::KeyBinding keybinding{};
+		std::string name{}, output_reader{}, input_cleaner{}, on_start{}, on_stop{};
+		bool log_action{ true };
+		ebtask::ActionHandler handler_type;
 		Mode() = default;
 	};
 
 	class EbtaskConfig
 	{
 	public:
-		ebtask::KeyBinding _normal_mode_keybinding{};
-		std::vector<Mode> _modes;
+		ebtask::KeyBinding normal_mode_keybinding{};
+		std::vector<Mode> modes;
+		std::map<std::string /*alias*/, std::string /*value*/> alias;
 
 		void save_config(std::string file_config_path);
-		static EbtaskConfig from_config_file(std::string file_config_path);
-		static EbtaskConfig generate_config_template();
+		std::string get_alias_value(std::string alias_name);
+		static EbtaskConfig get_config_from_config_file(std::string file_config_path);
+		static EbtaskConfig generate_new_config_template();
 		EbtaskConfig() = default;
 	};
 
