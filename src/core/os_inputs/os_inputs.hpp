@@ -16,21 +16,21 @@ namespace ebtask
 	class Key
 	{
 	public:
-		int _code{ 1 };
-		std::string _normal{}, _altgr{}, _shift{}, _capslock{};
-		ebtask::KeyStatus _status{ ebtask::KeyStatus::RELEASED };
+		int code{ 1 };
+		std::string normal{}, altgr{}, shift{}, capslock{};
+		ebtask::KeyStatus status{ ebtask::KeyStatus::RELEASED };
 		Key() = default;
 
 		Key &operator=(const Key &other)
 		{
 			if (this == &other)
 				return *this;
-			_code = other._code;
-			_normal = other._normal;
-			_altgr = other._altgr;
-			_shift = other._shift;
-			_capslock = other._capslock;
-			_status = other._status;
+			code = other.code;
+			normal = other.normal;
+			altgr = other.altgr;
+			shift = other.shift;
+			capslock = other.capslock;
+			status = other.status;
 			return *this;
 		}
 	};

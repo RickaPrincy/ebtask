@@ -28,18 +28,19 @@ void ebtask::read_input_file(const char *devnode, ebtask::ReaderFunction callbac
 	while (is_running)
 	{
 		ssize_t bytes_read = read(fd, &ev, sizeof(struct input_event));
-		if (bytes_read == sizeof(struct input_event) && ev.type == EV_KEY)
-		{
-			try
-			{
-				is_running = callback(ev.code, static_cast<KeyStatus>(ev.value), fd, devnode);
-			}
-			catch (const std::runtime_error &error)
-			{
-				close(fd);
-				throw std::runtime_error(error);
-			}
-		}
+		
+        if (bytes_read != sizeof(struct input_event) || ev.type != EV_KEY)
+            continue;
+        
+        try
+        {
+            is_running = callback(ev.code, static_cast<KeyStatus>(ev.value), fd, devnode);
+        }
+        catch (const std::runtime_error &error)
+        {
+            close(fd);
+            throw std::runtime_error(error);
+        }
 	}
 
 	close(fd);

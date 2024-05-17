@@ -102,7 +102,10 @@ nlohmann::json ebtask::get_json_file_content(std::string path, bool required)
 	return config_file_content;
 }
 
-std::unordered_map<std::string, ebtask::PathExistErrorAction> ebtask::get_enum_string_path_error()
+ebtask::PathExistErrorAction ebtask::get_path_error_action_from_string(std::string action)
 {
-	return enum_error_action;
+	auto error_action = enum_error_action.find(action);
+	if (error_action == enum_error_action.end())
+		throw std::runtime_error("Valid error_action are [ OVERRIDE | COPY | ERROR ]");
+	return error_action->second;
 }

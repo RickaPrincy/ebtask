@@ -17,7 +17,6 @@ set(EBTASK_SOURCES
     src/core/os_inputs/guess_input_file.cpp
     src/core/os_inputs/read_input_file.cpp
     src/utils/os.cpp
-    src/utils/xutils.cpp
     src/utils/fs_utils.cpp)
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/ebtask_config.hpp.in"

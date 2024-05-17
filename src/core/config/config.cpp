@@ -5,17 +5,9 @@
 #include <unordered_map>
 
 #include "../../utils/fs_utils.hpp"
+#include "../../utils/json_utils.hpp"
 #include "../../utils/logger.hpp"
 #include "../ebtask_config.hpp"
-
-// JUST TO TRY MACRO A LIT BIT
-#define AFFECT_DATA_TO_JSON(json, obj, field) ((json)[#field] = (obj).field)
-#define READ_KEYBIND(json, obj, field) ((obj).field = (json)[#field].get<ebtask::KeyBinding>())
-#define READ_JSON_DATA(json, obj, field) ((obj).field = (json)[#field])
-
-#define READ_OPTIONAL_JSON_DATA(json, obj, field) \
-	if ((json).contains(#field))                  \
-	READ_JSON_DATA(json, obj, field)
 
 namespace fs = std::filesystem;
 using json = nlohmann::json;
@@ -121,7 +113,6 @@ ebtask::EbtaskConfig ebtask::EbtaskConfig::get_config_from_config_file(std::stri
 	try
 	{
 		READ_KEYBIND(file_content, config, normal_mode_keybinding);
-
 		for (const auto &alias : file_content["alias"])
 			config.alias.insert(
 				{ alias["name"].get<std::string>(), alias["value"].get<std::string>() });
@@ -163,20 +154,14 @@ ebtask::EbtaskConfig ebtask::EbtaskConfig::get_config_from_config_file(std::stri
 std::string ebtask::handle_config_file_already_exist_error(std::string file_name,
 	std::string error_action)
 {
-	if (error_action.empty())
-		error_action = "ERROR";
-
-	auto enum_error_action = ebtask::get_enum_string_path_error();
-	auto error = enum_error_action.find(error_action);
 	std::string file_path = ebtask::get_config_file_path(file_name);
-
 	if (!fs::exists(file_path))
 		return file_name;
 
-	if (error == enum_error_action.end())
-		throw std::runtime_error("Valid error_action are [ OVERRIDE | COPY | ERROR ]");
+	auto action_on_error =
+		ebtask::get_path_error_action_from_string(error_action.empty() ? "ERROR" : error_action);
 
-	if (fs::exists(file_path) && error->second == ebtask::PathExistErrorAction::ERROR)
+	if (fs::exists(file_path) && action_on_error == ebtask::PathExistErrorAction::ERROR)
 		throw std::runtime_error(
 			file_path + " already exists, use --error-action to specify what to do");
 
@@ -184,7 +169,7 @@ std::string ebtask::handle_config_file_already_exist_error(std::string file_name
 		throw std::runtime_error(file_path + " is not a valid layout config file");
 
 	// switch not working on enum class value
-	if (error->second == ebtask::PathExistErrorAction::OVERRIDE)
+	if (action_on_error == ebtask::PathExistErrorAction::OVERRIDE)
 		ebtask::warn(file_path + " will be overridden");
 	else
 	{
@@ -193,4 +178,12 @@ std::string ebtask::handle_config_file_already_exist_error(std::string file_name
 	}
 
 	return file_name;
+}
+
+std::string ebtask::EbtaskConfig::get_alias_value(std::string alias_name)
+{
+	auto alias_value = this->alias.find(alias_name);
+	if (alias_value == this->alias.end())
+		return alias_name;
+	return alias_value->second;
 }

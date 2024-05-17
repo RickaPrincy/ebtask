@@ -2,7 +2,6 @@
 
 #include "../../utils/logger.hpp"
 #include "../../utils/os.hpp"
-#include "../../utils/xutils.hpp"
 #include "../config/config.hpp"
 #include "../os_inputs/os_inputs.hpp"
 #include "actions.hpp"
@@ -14,30 +13,27 @@ static const ebtask::Mode* _CURRENT_MODE_ = nullptr;
 static std::string _CURRENT_FUNCTION_NAME_ = "";
 static std::string _CURRENT_FUNCTION_ARG_ = "";
 static std::string* _CURRENT_TEXT_ = &_CURRENT_FUNCTION_NAME_;
-static const std::string ARG_NAME = "$arg";
 static const int TEXT_LENGTH_LIMIT = 5000;
 
 // /!\ TODO: refactor
 static void execute_command_by_current_mode(const std::string& command)
 {
-	if (_CURRENT_MODE_->output_reader == "@XCLIP")
+	std::string command_value = ebtask_config.get_alias_value(command);
+	if (_CURRENT_MODE_->handler_type == ebtask::ActionHandler::KEYBINDING)
 	{
-		ebtask::execute_and_copy(command);
-		ebtask::execute_and_type("echo \"C\"");
+		ebtask::execute_command(command_value);
+		return;
 	}
-	else if (_CURRENT_MODE_->output_reader == "@XDOTOOL")
-		ebtask::execute_and_type(command);
 	else
-		ebtask::execute_command(command);
 
-	if (_CURRENT_MODE_->log_action)
-		ebtask::log(command + " [ EXECUTED ]");
+		if (_CURRENT_MODE_->log_action)
+		ebtask::log(command_value + " [ EXECUTED ]");
 }
 
 static void reset_handling()
 {
 	if (_CURRENT_MODE_ != nullptr)
-		ebtask::execute_command(_CURRENT_MODE_->on_stop);
+		ebtask::execute_command(ebtask_config.get_alias_value(_CURRENT_MODE_->on_stop));
 	_CURRENT_FUNCTION_NAME_ = _CURRENT_FUNCTION_ARG_ = "";
 	_CURRENT_TEXT_ = &_CURRENT_FUNCTION_NAME_;
 
@@ -49,20 +45,21 @@ static bool handle_mode()
 {
 	for (const auto& mode : ebtask_config.modes)
 	{
-		if (ebtask::is_all_pressed(mode.keybinding))
-		{
-			if (_CURRENT_MODE_ != nullptr)
-				ebtask::execute_command(_CURRENT_MODE_->on_stop);
-			_CURRENT_MODE_ = &mode;
-			return true;
-		}
+		if (!ebtask::is_all_pressed(mode.keybinding))
+			continue;
+		if (_CURRENT_MODE_ != nullptr)
+			ebtask::execute_command(ebtask_config.get_alias_value(_CURRENT_MODE_->on_stop));
+		_CURRENT_MODE_ = &mode;
+		ebtask::execute_command(ebtask_config.get_alias_value(_CURRENT_MODE_->on_start));
+		return true;
 	}
+
 	return false;
 }
 
 static void handle_function(int code)
 {
-	if (ebtask::is_special())
+	if (ebtask::is_special())  // no action if it's a special key
 		return;
 
 	if (ebtask::is_backspace(code))
@@ -71,7 +68,8 @@ static void handle_function(int code)
 			_CURRENT_TEXT_->pop_back();
 		return;
 	}
-	else if (ebtask::is_space(code))
+
+	if (ebtask::is_space(code))
 	{
 		*_CURRENT_TEXT_ += " ";
 		return;
@@ -79,42 +77,47 @@ static void handle_function(int code)
 
 	std::string key_value = ebtask::get_key_text_value(code);
 
+	// TODO: REFACTOR
 	if (key_value == "(")
 	{
 		_CURRENT_TEXT_ = &_CURRENT_FUNCTION_ARG_;
 		return;
 	}
-	else if (key_value == ")")
+
+	if (key_value == ")")
 	{
-		ebtask::execute_command(_CURRENT_MODE_->input_cleaner);
-		ebtask::do_backspace(_CURRENT_FUNCTION_NAME_.size() + _CURRENT_FUNCTION_ARG_.size() + 2);
+		// set input alias value
+		ebtask_config.alias["@input"] = _CURRENT_FUNCTION_ARG_;
+		ebtask_config.alias["@input.size"] = _CURRENT_FUNCTION_ARG_;
+
+		// STEP1: clean input
+		ebtask::execute_command(ebtask_config.get_alias_value(_CURRENT_MODE_->input_cleaner));
+
 		auto action = std::find_if(_CURRENT_MODE_->actions.begin(),
 			_CURRENT_MODE_->actions.end(),
 			[&](const auto& _action) { return _action.function == _CURRENT_FUNCTION_NAME_; });
 
 		if (action == _CURRENT_MODE_->actions.end())
 		{
-			ebtask::xtype_string("[ERROR] : Function not found");
+			// TODO: maybe a new features
+			ebtask::cerr("[ ERROR ]: Function not found");
 			reset_handling();
 			return;
 		}
 
-		std::string command_with_arg = action->command;
-		size_t found = command_with_arg.find(ARG_NAME);
-		if (found != std::string::npos)
-			command_with_arg.replace(found, ARG_NAME.length(), _CURRENT_FUNCTION_ARG_);
+		execute_command_by_current_mode(action->command);
+		reset_handling();
+		return;
+	}
 
-		execute_command_by_current_mode(command_with_arg);
-		reset_handling();
-		return;
-	}
-	else if (_CURRENT_TEXT_->size() > TEXT_LENGTH_LIMIT)
+	if (_CURRENT_TEXT_->size() > TEXT_LENGTH_LIMIT)
 	{
-		ebtask::do_backspace(_CURRENT_FUNCTION_NAME_.size() + _CURRENT_FUNCTION_ARG_.size());
-		ebtask::xtype_string("[ ERROR ]: Too long arg or function name");
+		ebtask::execute_command(ebtask_config.get_alias_value(_CURRENT_MODE_->input_cleaner));
+		ebtask::cerr("[ ERROR ]: Too long arg or function name");
 		reset_handling();
 		return;
 	}
+
 	*_CURRENT_TEXT_ += key_value;
 }
 
@@ -131,7 +134,7 @@ static void handle_action(int code)
 
 	for (const auto& action : _CURRENT_MODE_->actions)
 	{
-		if (!(_CURRENT_MODE_->handler_type == ebtask::ActionHandler::FUNCTION) &&
+		if (_CURRENT_MODE_->handler_type != ebtask::ActionHandler::FUNCTION ||
 			ebtask::is_all_pressed(action.keybinding))
 		{
 			execute_command_by_current_mode(action.command);

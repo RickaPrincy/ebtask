@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "../../utils/fs_utils.hpp"
+#include "../../utils/json_utils.hpp"
 #include "../../utils/logger.hpp"
 #include "../config/config.hpp"
 #include "actions.hpp"
@@ -36,11 +37,11 @@ static void save_key(ebtask::Key new_key)
 			config_content["keys"] = json::array();
 		if (!config_content["keys"].is_array())
 			throw std::runtime_error("Your current ebtask key contains keys but it's no an array");
-		json new_json_key = json::object({ { "code", new_key._code },
-			{ "normal", new_key._normal },
-			{ "altgr", new_key._altgr },
-			{ "capslock", new_key._capslock },
-			{ "shift", new_key._shift } });
+		json new_json_key = json::object({ { "code", new_key.code },
+			{ "normal", new_key.normal },
+			{ "altgr", new_key.altgr },
+			{ "capslock", new_key.capslock },
+			{ "shift", new_key.shift } });
 		config_content["keys"].push_back(new_json_key);
 		ebtask::save_json_file(current_config_path, config_content);
 	}
@@ -65,14 +66,14 @@ static ebtask::Key ask_and_get_key_from_code(int code)
 {
 	ebtask::log("Keycode: " + std::to_string(code));
 	ebtask::Key new_key{};
-	new_key._normal = ask_key_value("NORMAL (nothing special)");
+	new_key.normal = ask_key_value("NORMAL (nothing special)");
 
-	if (new_key._normal.empty())
+	if (new_key.normal.empty())
 		return new_key;
-	new_key._capslock = ask_key_value("CAPSLOCK");
-	new_key._shift = ask_key_value("SHIFT (left or right)");
-	new_key._altgr = ask_key_value("ALTGR");
-	new_key._code = code;
+	new_key.capslock = ask_key_value("CAPSLOCK");
+	new_key.shift = ask_key_value("SHIFT (left or right)");
+	new_key.altgr = ask_key_value("ALTGR");
+	new_key.code = code;
 	return new_key;
 }
 
@@ -80,8 +81,8 @@ static ebtask::Key get_key_from_special_code(int code, std::string name)
 {
 	ebtask::log("Keycode: " + std::to_string(code));
 	ebtask::Key special;
-	special._code = code;
-	special._normal = special._altgr = special._shift = special._capslock = name;
+	special.code = code;
+	special.normal = special.altgr = special.shift = special.capslock = name;
 	return special;
 }
 
@@ -132,6 +133,6 @@ ebtask::ReaderFunction ebtask::remap_layout(std::string layout_filename, std::st
 		fd = open(devnode, O_RDONLY);
 		if (fd == -1)
 			throw std::runtime_error("Cannot reopen devnode");
-		return !key._normal.empty();
+		return !key.normal.empty();
 	};
 }
