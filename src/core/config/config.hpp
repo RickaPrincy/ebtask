@@ -37,11 +37,11 @@ namespace ebtask
 	{
 	public:
 		ebtask::KeyBinding normal_mode_keybinding{};
-		std::vector<Mode> modes;
-		std::map<std::string /*alias*/, std::string /*value*/> alias;
+		std::vector<Mode> modes{};
+		std::map<std::string /*alias*/, std::string /*value*/> alias{}, specific_alias;
 
 		void save_config(std::string file_config_path);
-		std::string get_alias_value(std::string alias_name);
+		std::string replace_all_alias(std::string command);
 		static EbtaskConfig get_config_from_config_file(std::string file_config_path);
 		static EbtaskConfig generate_new_config_template();
 		EbtaskConfig() = default;

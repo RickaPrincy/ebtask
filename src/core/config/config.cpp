@@ -44,20 +44,20 @@ ebtask::EbtaskConfig ebtask::EbtaskConfig::generate_new_config_template()
 	ebtask::EbtaskConfig config;
 	ebtask::Action say_hello_action;
 	say_hello_action.function = "sayHello";
-	say_hello_action.command = "echo \"Hello $INPUT\"";
+	say_hello_action.command = "echo \"Hello @input\"";
 
 	ebtask::Mode example_mode;
 	example_mode.actions.push_back(say_hello_action);
 	example_mode.handler_type = ebtask::ActionHandler::FUNCTION;
 	example_mode.keybinding = { 42, 54 };
-	example_mode.output_reader = "@XDOTOOL_TYPE";
-	example_mode.input_cleaner = "@XDOTOOL_ERASE";
+	example_mode.output_reader = "@xdotool_type";
+	example_mode.input_cleaner = "@xdotool_erase";
 	example_mode.name = "example";
 
 	config.normal_mode_keybinding = { 1, 42 };
-	config.alias = { { "@XDOTOOL_TYPE", "xdotool type \"$OUTPUT\"" },
-		{ "@XCLIP_COPY", "echo \"$OUTPUT\" | xclip -selection clipboard" },
-		{ "@XDOTOOL_ERASE", "xdotool key --clearmodifiers --repeat $INPUT_SIZE BackSpace" } };
+	config.alias = { { "@xdotool_type", "xdotool type \"@output\"" },
+		{ "@xclip_copy", "echo \"@output\" | xclip -selection clipboard" },
+		{ "@xdotool_erase", "xdotool key --clearmodifiers --repeat @isize BackSpace" } };
 
 	config.modes.push_back(example_mode);
 	return config;
@@ -179,10 +179,29 @@ std::string ebtask::handle_config_file_already_exist_error(std::string file_name
 	return file_name;
 }
 
-std::string ebtask::EbtaskConfig::get_alias_value(std::string alias_name)
+static std::string replace_all_occurrence(const std::string &source,
+	const std::string &to_replace,
+	const std::string &replace_value)
 {
-	auto alias_value = this->alias.find(alias_name);
-	if (alias_value == this->alias.end())
-		return alias_name;
-	return alias_value->second;
+	std::string result = source;
+	size_t position = result.find(to_replace);
+
+	while (position != std::string::npos)
+	{
+		result.replace(position, to_replace.length(), replace_value);
+		position = result.find(to_replace, position + replace_value.length());
+	}
+
+	return result;
+}
+
+std::string ebtask::EbtaskConfig::replace_all_alias(std::string command)
+{
+	for (const auto &[name, value] : this->alias)
+		command = replace_all_occurrence(command, name, value);
+
+	for (const auto &[name, value] : this->specific_alias)
+		command = replace_all_occurrence(command, name, value);
+
+	return command;
 }

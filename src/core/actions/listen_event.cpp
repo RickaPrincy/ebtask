@@ -16,20 +16,27 @@ static std::string* _CURRENT_TEXT_ = &_CURRENT_FUNCTION_NAME_;
 static const int TEXT_LENGTH_LIMIT = 5000;
 
 // /!\ TODO: refactor
-static void execute_command_by_current_mode(const std::string& command)
+static std::string execute_command_by_current_mode(const std::string& command)
 {
-	std::string command_value = ebtask_config.get_alias_value(command);
-	ebtask::execute_command(command_value, _CURRENT_MODE_->log_action);
+	std::string command_value = ebtask_config.replace_all_alias(command);
+	return ebtask::execute_command(command_value, _CURRENT_MODE_->log_action);
 }
 
 static void reset_handling()
 {
 	if (_CURRENT_MODE_ != nullptr)
-		ebtask::execute_command(ebtask_config.get_alias_value(_CURRENT_MODE_->on_stop));
+		ebtask::execute_command(ebtask_config.replace_all_alias(_CURRENT_MODE_->on_stop));
 
 	_CURRENT_FUNCTION_NAME_ = _CURRENT_FUNCTION_ARG_ = "";
 	_CURRENT_TEXT_ = &_CURRENT_FUNCTION_NAME_;
 	_CURRENT_MODE_ = nullptr;
+
+	// reset alias value
+	ebtask_config.specific_alias["@input"] = "";
+	ebtask_config.specific_alias["@output"] = "";
+	ebtask_config.specific_alias["@isize"] = "";
+	ebtask_config.specific_alias["@osize"] = "";
+
 	ebtask::log("Switch mode to -> NORMAL");
 }
 
@@ -47,10 +54,10 @@ static bool handle_mode()
 			continue;
 
 		if (_CURRENT_MODE_ != nullptr)
-			ebtask::execute_command(ebtask_config.get_alias_value(_CURRENT_MODE_->on_stop));
+			ebtask::execute_command(ebtask_config.replace_all_alias(_CURRENT_MODE_->on_stop));
 
 		_CURRENT_MODE_ = &mode;
-		ebtask::execute_command(ebtask_config.get_alias_value(_CURRENT_MODE_->on_start));
+		ebtask::execute_command(ebtask_config.replace_all_alias(_CURRENT_MODE_->on_start));
 		ebtask::log("Switch mode to -> " + _CURRENT_MODE_->name);
 		return true;
 	}
@@ -87,13 +94,12 @@ static void handle_function(int code)
 
 	if (key_value == ")")
 	{
-		// set input alias value
-		ebtask_config.alias["@input"] = _CURRENT_FUNCTION_ARG_;
-		// FIXME: Change the value of size to the real value of _CURRENT_FUNCTION_ARG_ size
-		ebtask_config.alias["@input.size"] = _CURRENT_FUNCTION_ARG_;
+		// STEP0: set input alias value
+		ebtask_config.specific_alias["@input"] = _CURRENT_FUNCTION_ARG_;
+		ebtask_config.specific_alias["@isize"] = std::to_string(_CURRENT_FUNCTION_ARG_.size());
 
 		// STEP1: clean input
-		ebtask::execute_command(ebtask_config.get_alias_value(_CURRENT_MODE_->input_cleaner));
+		ebtask::execute_command(ebtask_config.replace_all_alias(_CURRENT_MODE_->input_cleaner));
 
 		auto action = std::find_if(_CURRENT_MODE_->actions.begin(),
 			_CURRENT_MODE_->actions.end(),
@@ -107,15 +113,25 @@ static void handle_function(int code)
 			return;
 		}
 
-		execute_command_by_current_mode(action->command);
+		// STEP2: execute the action
+		std::string output = execute_command_by_current_mode(action->command);
+
+		// STEP3: set all alias for output
+		ebtask_config.specific_alias["@output"] = output;
+		ebtask_config.specific_alias["@osize"] = std::to_string(output.size());
+
 		reset_handling();
 		return;
 	}
 
 	if (_CURRENT_TEXT_->size() > TEXT_LENGTH_LIMIT)
 	{
-		ebtask::execute_command(ebtask_config.get_alias_value(_CURRENT_MODE_->input_cleaner));
-		ebtask::cerr("[ ERROR ]: Too long arg or function name");
+		// STEP0: set input alias value (duplicate for perf)
+		ebtask_config.specific_alias["@input"] = _CURRENT_FUNCTION_ARG_;
+		ebtask_config.specific_alias["@isize"] = std::to_string(_CURRENT_FUNCTION_ARG_.size());
+
+		ebtask::execute_command(ebtask_config.replace_all_alias(_CURRENT_MODE_->input_cleaner));
+		ebtask::cerr("[ ERROR ]: Too long input or function name");
 		reset_handling();
 		return;
 	}
