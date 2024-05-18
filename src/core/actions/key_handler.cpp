@@ -15,12 +15,11 @@ static int _BACKSPACE_CODE_{ -1 }, _SPACE_CODE_{ -1 };
 static bool _IS_LATEST_KEY_PRESSED_IS_SPECIAL_ = false;
 
 // to avoid a lot of query in the keys
-static std::unordered_map<std::string /*keyname*/, ebtask::KeyStatus> _SPECIAL_KEYS_{
-	{ "CAPSLOCK", ebtask::KeyStatus::RELEASED },
+static std::unordered_map<std::string /*keyname*/, ebtask::KeyStatus> _SPECIAL_KEYS_{ { "CAPSLOCK",
+																						  ebtask::KeyStatus::RELEASED },
 	{ "LEFT_SHIFT", ebtask::KeyStatus::RELEASED },
 	{ "RIGHT_SHIFT", ebtask::KeyStatus::RELEASED },
-	{ "ALTGR", ebtask::KeyStatus::RELEASED }
-};
+	{ "ALTGR", ebtask::KeyStatus::RELEASED } };
 
 void ebtask::load_layout(std::string config_path)
 {

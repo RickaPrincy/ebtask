@@ -18,8 +18,7 @@ int main(int argc, const char *argv[])
 		"Specify what to do if file config already existed (enum: [ ERROR - COPY - OVERRIDE ])",
 		"error_action");
 	rcli::Option name_option("-n,--name", "Specify new name", "name");
-	rcli::Option devnode_option(
-		"-i,--input-event", "Specify new input event on your os", "devnode");
+	rcli::Option devnode_option("-i,--input-event", "Specify new input event on your os", "devnode");
 
 	// -----------------------------------------------------------------------------------
 	rcli::Command remap("remap_layout",
@@ -33,9 +32,8 @@ int main(int argc, const char *argv[])
 			if (layout_name.empty())
 				layout_name = rcli::ask_input_value(input_config.text("Layout name"));
 
-			ebtask::run([&]()
-				{ return ebtask::remap_layout(layout_name + LAYOUT_CONFIG_SUFFIX, error_action); },
-				devnode);
+			ebtask::run(
+				[&]() { return ebtask::remap_layout(layout_name + LAYOUT_CONFIG_SUFFIX, error_action); }, devnode);
 		});
 	remap.add_option(&name_option);
 	remap.add_option(&devnode_option);
@@ -71,17 +69,12 @@ int main(int argc, const char *argv[])
 
 			if (config_name.empty())
 				config_name = DEFAULT_CONFIG_FILE_NAME;
-			ebtask::run(
-				[&]() {
-					return ebtask::listen_event(
-						layout_name + LAYOUT_CONFIG_SUFFIX, config_name + CONFIG_SUFFIX);
-				},
+			ebtask::run([&]()
+				{ return ebtask::listen_event(layout_name + LAYOUT_CONFIG_SUFFIX, config_name + CONFIG_SUFFIX); },
 				devnode);
 		});
-	listen.add_option(
-		"-l,--layout", "Specify layout to use (only name without .layout.json)", "layout_name");
-	listen.add_option(
-		"-c,--config", "Specify config to use (only name without .config.json)", "config_name");
+	listen.add_option("-l,--layout", "Specify layout to use (only name without .layout.json)", "layout_name");
+	listen.add_option("-c,--config", "Specify config to use (only name without .config.json)", "config_name");
 	listen.add_option(&devnode_option);
 
 	// -----------------------------------------------------------------------------------

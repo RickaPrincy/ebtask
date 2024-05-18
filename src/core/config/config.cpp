@@ -22,8 +22,7 @@ static ebtask::ActionHandler get_action_handler_type(std::string handler)
 {
 	auto value = enum_hanlder.find(handler);
 	if (value == enum_hanlder.end())
-		throw std::runtime_error(
-			"Action handler type not valid (enum: [ FUNCTION | KEY_BINDING ])");
+		throw std::runtime_error("Action handler type not valid (enum: [ FUNCTION | KEY_BINDING ])");
 	return value->second;
 }
 
@@ -50,12 +49,15 @@ ebtask::EbtaskConfig ebtask::EbtaskConfig::generate_new_config_template()
 	example_mode.actions.push_back(say_hello_action);
 	example_mode.handler_type = ebtask::ActionHandler::FUNCTION;
 	example_mode.keybinding = { 42, 54 };
-	example_mode.output_reader = "@xdotool_type";
-	example_mode.input_cleaner = "@xdotool_erase";
+	example_mode.output_reader = "@wtype_type";
+	example_mode.input_cleaner = "@wtype_erase";
 	example_mode.name = "example";
 
 	config.normal_mode_keybinding = { 1, 42 };
-	config.alias = { { "@xdotool_type", "xdotool type \"@output\"" },
+	config.alias = { { "@wtype_erase", "" },
+		{ "@wl_clipboard_copy", "wl-copy \"output\"" },
+		{ "@wtype_type", "wtype \"@output\"" },
+		{ "@xdotool_type", "xdotool type \"@output\"" },
 		{ "@xclip_copy", "echo \"@output\" | xclip -selection clipboard" },
 		{ "@xdotool_erase", "xdotool key --clearmodifiers --repeat @isize BackSpace" } };
 
@@ -76,8 +78,7 @@ void ebtask::EbtaskConfig::save_config(std::string config_file_path)
 	{
 		json new_mode;
 		AFFECT_DATA_TO_JSON(new_mode, mode, name);
-		new_mode["handler_type"] =
-			mode.handler_type == ebtask::ActionHandler::FUNCTION ? "FUNCTION" : "KEY_BINDING";
+		new_mode["handler_type"] = mode.handler_type == ebtask::ActionHandler::FUNCTION ? "FUNCTION" : "KEY_BINDING";
 		AFFECT_DATA_TO_JSON(new_mode, mode, log_action);
 		AFFECT_DATA_TO_JSON(new_mode, mode, keybinding);
 		AFFECT_DATA_TO_JSON(new_mode, mode, input_cleaner);
@@ -113,8 +114,7 @@ ebtask::EbtaskConfig ebtask::EbtaskConfig::get_config_from_config_file(std::stri
 	{
 		READ_KEYBIND(file_content, config, normal_mode_keybinding);
 		for (const auto &alias : file_content["alias"])
-			config.alias.insert(
-				{ alias["name"].get<std::string>(), alias["value"].get<std::string>() });
+			config.alias.insert({ alias["name"].get<std::string>(), alias["value"].get<std::string>() });
 
 		for (const auto &mode : file_content["modes"])
 		{
@@ -150,19 +150,16 @@ ebtask::EbtaskConfig ebtask::EbtaskConfig::get_config_from_config_file(std::stri
 	return config;
 }
 
-std::string ebtask::handle_config_file_already_exist_error(std::string file_name,
-	std::string error_action)
+std::string ebtask::handle_config_file_already_exist_error(std::string file_name, std::string error_action)
 {
 	std::string file_path = ebtask::get_config_file_path(file_name);
 	if (!fs::exists(file_path))
 		return file_name;
 
-	auto action_on_error =
-		ebtask::get_path_error_action_from_string(error_action.empty() ? "ERROR" : error_action);
+	auto action_on_error = ebtask::get_path_error_action_from_string(error_action.empty() ? "ERROR" : error_action);
 
 	if (fs::exists(file_path) && action_on_error == ebtask::PathExistErrorAction::ERROR)
-		throw std::runtime_error(
-			file_path + " already exists, use --error-action to specify what to do");
+		throw std::runtime_error(file_path + " already exists, use --error-action to specify what to do");
 
 	if (!fs::is_regular_file(file_path))
 		throw std::runtime_error(file_path + " is not a valid layout config file");

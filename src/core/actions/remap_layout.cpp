@@ -16,13 +16,8 @@ static rcli::InputConfig input_config = rcli::InputConfig().clean(false).require
 static int special_recorded = 0;
 static std::string current_config_path{};
 
-static const std::array<std::string, 7> _SPECIAL_KEYS_NAMES_{ "ENTER",
-	"CAPSLOCK",
-	"LEFT_SHIFT",
-	"RIGHT_SHIFT",
-	"ALTGR",
-	"BACKSPACE",
-	"SPACE" };
+static const std::array<std::string, 7>
+	_SPECIAL_KEYS_NAMES_{ "ENTER", "CAPSLOCK", "LEFT_SHIFT", "RIGHT_SHIFT", "ALTGR", "BACKSPACE", "SPACE" };
 using json = nlohmann::json;
 
 static void save_key(ebtask::Key new_key)
@@ -57,8 +52,7 @@ static void save_key(ebtask::Key new_key)
 
 static std::string ask_key_value(std::string special_key)
 {
-	return rcli::ask_input_value(
-		input_config.text("Enter the value when \"" + special_key + "\" is PRESSED"));
+	return rcli::ask_input_value(input_config.text("Enter the value when \"" + special_key + "\" is PRESSED"));
 }
 
 static ebtask::Key ask_and_get_key_from_code(int code)

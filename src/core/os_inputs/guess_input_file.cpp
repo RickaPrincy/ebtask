@@ -11,8 +11,7 @@ std::string ebtask::guess_input_file()
 	ebtask::UdevResourceWrapper<udev> udev(udev_new(), udev_unref);
 	std::string result = "";
 
-	ebtask::UdevResourceWrapper<udev_enumerate> enumerate(
-		udev_enumerate_new(udev), udev_enumerate_unref);
+	ebtask::UdevResourceWrapper<udev_enumerate> enumerate(udev_enumerate_new(udev), udev_enumerate_unref);
 	udev_enumerate_add_match_subsystem(enumerate, "input");
 	udev_enumerate_add_match_property(enumerate, "ID_INPUT_KEYBOARD", "1");
 	udev_enumerate_scan_devices(enumerate);
@@ -23,8 +22,7 @@ std::string ebtask::guess_input_file()
 	udev_list_entry_foreach(entry, devices)
 	{
 		const char *path = udev_list_entry_get_name(entry);
-		ebtask::UdevResourceWrapper<udev_device> dev(
-			udev_device_new_from_syspath(udev, path), udev_device_unref);
+		ebtask::UdevResourceWrapper<udev_device> dev(udev_device_new_from_syspath(udev, path), udev_device_unref);
 
 		const char *devnode = udev_device_get_devnode(dev);
 

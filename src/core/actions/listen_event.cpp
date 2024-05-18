@@ -16,10 +16,16 @@ static std::string* _CURRENT_TEXT_ = &_CURRENT_FUNCTION_NAME_;
 static const int TEXT_LENGTH_LIMIT = 5000;
 
 // /!\ TODO: refactor
-static std::string execute_command_by_current_mode(const std::string& command)
+static void execute_command_by_current_mode(const std::string& command)
 {
 	std::string command_value = ebtask_config.replace_all_alias(command);
-	return ebtask::execute_command(command_value, _CURRENT_MODE_->log_action);
+	std::string output = ebtask::execute_command(command_value, _CURRENT_MODE_->log_action);
+
+	ebtask_config.specific_alias["@output"] = output;
+	ebtask_config.specific_alias["@osize"] = std::to_string(output.size());
+
+	ebtask::execute_command(ebtask_config.replace_all_alias(_CURRENT_MODE_->output_reader));
+	return;
 }
 
 static void reset_handling()
@@ -114,12 +120,8 @@ static void handle_function(int code)
 		}
 
 		// STEP2: execute the action
-		std::string output = execute_command_by_current_mode(action->command);
-
-		// STEP3: set all alias for output
-		ebtask_config.specific_alias["@output"] = output;
-		ebtask_config.specific_alias["@osize"] = std::to_string(output.size());
-
+		// STEP3: take the output and execute output reader
+		execute_command_by_current_mode(action->command);
 		reset_handling();
 		return;
 	}

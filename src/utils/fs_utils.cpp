@@ -45,9 +45,7 @@ void ebtask::copy_folder(std::string source, std::string destination)
 {
 	try
 	{
-		fs::copy(source,
-			destination,
-			fs::copy_options::recursive | fs::copy_options::overwrite_existing);
+		fs::copy(source, destination, fs::copy_options::recursive | fs::copy_options::overwrite_existing);
 	}
 	catch (const std::exception &e)
 	{
