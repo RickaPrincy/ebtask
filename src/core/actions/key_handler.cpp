@@ -24,7 +24,7 @@ static std::unordered_map<std::string /*keyname*/, ebtask::KeyStatus> _SPECIAL_K
 
 void ebtask::load_layout(std::string config_path)
 {
-	json layout_content = ebtask::get_json_file_content(config_path);
+	json layout_content = ebtask::get_json_file_content(config_path, true);
 	try
 	{
 		for (const auto &key : layout_content["keys"])
@@ -54,13 +54,14 @@ ebtask::KeyStatus ebtask::update_key_status(int code, ebtask::KeyStatus status)
 {
 	if (_KEYS_.find(code) == _KEYS_.end())
 		return ebtask::KeyStatus::NOT_FOUND;
+
 	ebtask::Key &key = _KEYS_[code];
 	key.status = status;
 
 	if (_SPECIAL_KEYS_.find(key.normal) != _SPECIAL_KEYS_.end())
 	{
 		_SPECIAL_KEYS_[key.normal] = status;
-		_IS_LATEST_KEY_PRESSED_IS_SPECIAL_= true;
+		_IS_LATEST_KEY_PRESSED_IS_SPECIAL_ = true;
 	}
 	else
 		_IS_LATEST_KEY_PRESSED_IS_SPECIAL_ = false;

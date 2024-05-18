@@ -4,8 +4,13 @@
 #include <memory>
 #include <stdexcept>
 
-std::string ebtask::execute_command(const std::string &command)
+#include "logger.hpp"
+
+std::string ebtask::execute_command(const std::string &command, bool log)
 {
+	if (command.empty())
+		return "";
+
 	const char *cmd = command.c_str();
 	// There is no bufferflow here XD
 	std::array<char, 128> buffer;
@@ -18,5 +23,9 @@ std::string ebtask::execute_command(const std::string &command)
 	while (!feof(pipe.get()))
 		if (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr)
 			result += buffer.data();
+
+	if (log)
+		ebtask::log("EXECUTED: " + command);
+
 	return result;
 }

@@ -19,37 +19,39 @@ static const int TEXT_LENGTH_LIMIT = 5000;
 static void execute_command_by_current_mode(const std::string& command)
 {
 	std::string command_value = ebtask_config.get_alias_value(command);
-	if (_CURRENT_MODE_->handler_type == ebtask::ActionHandler::KEYBINDING)
-	{
-		ebtask::execute_command(command_value);
-		return;
-	}
-
-	if (_CURRENT_MODE_->log_action)
-		ebtask::log(command_value + " [ EXECUTED ]");
+	ebtask::execute_command(command_value, _CURRENT_MODE_->log_action);
 }
 
 static void reset_handling()
 {
 	if (_CURRENT_MODE_ != nullptr)
 		ebtask::execute_command(ebtask_config.get_alias_value(_CURRENT_MODE_->on_stop));
+
 	_CURRENT_FUNCTION_NAME_ = _CURRENT_FUNCTION_ARG_ = "";
 	_CURRENT_TEXT_ = &_CURRENT_FUNCTION_NAME_;
-
 	_CURRENT_MODE_ = nullptr;
-	ebtask::log("Back the NORMAL modes");
+	ebtask::log("Switch mode to -> NORMAL");
 }
 
 static bool handle_mode()
 {
+	if (ebtask::is_all_pressed(ebtask_config.normal_mode_keybinding))
+	{
+		reset_handling();
+		return true;
+	}
+
 	for (const auto& mode : ebtask_config.modes)
 	{
 		if (!ebtask::is_all_pressed(mode.keybinding))
 			continue;
+
 		if (_CURRENT_MODE_ != nullptr)
 			ebtask::execute_command(ebtask_config.get_alias_value(_CURRENT_MODE_->on_stop));
+
 		_CURRENT_MODE_ = &mode;
 		ebtask::execute_command(ebtask_config.get_alias_value(_CURRENT_MODE_->on_start));
+		ebtask::log("Switch mode to -> " + _CURRENT_MODE_->name);
 		return true;
 	}
 
@@ -100,7 +102,7 @@ static void handle_function(int code)
 		if (action == _CURRENT_MODE_->actions.end())
 		{
 			// TODO: maybe a new features
-			ebtask::cerr("[ ERROR ]: Function not found");
+			ebtask::cerr("Function not found");
 			reset_handling();
 			return;
 		}
@@ -154,16 +156,17 @@ ebtask::ReaderFunction ebtask::listen_event(std::string layout_name, std::string
 
 	return [&](int code, ebtask::KeyStatus status, int& fd, const char* devnode)
 	{
+		// TODO: allow repeated
+		if (status == KeyStatus::REPEATED)
+			return true;
+
 		if (ebtask::update_key_status(code, status) == KeyStatus::NOT_FOUND)
-			return false;
+			return true;
 
 		if (handle_mode())
-			return false;
-
-		if (status != KeyStatus::PRESSED)
-			return false;
+			return true;
 
 		handle_action(code);
-		return false;
+		return true;
 	};
 }

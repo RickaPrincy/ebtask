@@ -8,7 +8,7 @@ namespace ebtask
 {
 	inline void cerr(std::string message)
 	{
-		std::cerr << TColor::B_RED << "[ ERROR ]: " << TColor::B_WHITE << message << std::endl;
+		std::cerr << TColor::B_RED << "[ ERR ]: " << TColor::B_WHITE << message << std::endl;
 	}
 
 	inline void log(std::string message, bool do_endl = true)
@@ -23,6 +23,6 @@ namespace ebtask
 
 	inline void warn(std::string message)
 	{
-		std::cout << TColor::B_YELLOW << "[ WARNING ]: " << TColor::WHITE << message << std::endl;
+		std::cout << TColor::B_YELLOW << "[ WAR ]: " << TColor::WHITE << message << std::endl;
 	}
 };	// namespace ebtask

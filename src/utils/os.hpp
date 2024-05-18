@@ -4,5 +4,5 @@
 
 namespace ebtask
 {
-	std::string execute_command(const std::string &command);
+	std::string execute_command(const std::string &command, bool log = true);
 }
