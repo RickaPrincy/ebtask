@@ -1,12 +1,11 @@
 # ebtask 
+**ebtask**: execute background task
 
-**ebtask**: execute background task and retrieve it's output anywhere
-
-## Getting started
-
-### Requirements
-    - cmake
-    - make
-    - xclip (to copy command output)
-    - xdotool (to directly write command output)
-    - libudev
+```bash
+sudo groupadd ebtask 
+sudo usermod -aG ebtask your_username
+sudo nano /etc/udev/rules.d/99-input.rules
+SUBSYSTEM=="input", GROUP="ebtask", MODE="0640"
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
