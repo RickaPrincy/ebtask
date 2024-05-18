@@ -166,6 +166,9 @@ ebtask::ReaderFunction ebtask::listen_event(std::string layout_name, std::string
 		if (handle_mode())
 			return true;
 
+		if (status != KeyStatus::PRESSED)
+			return true;
+
 		handle_action(code);
 		return true;
 	};
