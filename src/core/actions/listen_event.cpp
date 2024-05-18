@@ -24,9 +24,8 @@ static void execute_command_by_current_mode(const std::string& command)
 		ebtask::execute_command(command_value);
 		return;
 	}
-	else
 
-		if (_CURRENT_MODE_->log_action)
+	if (_CURRENT_MODE_->log_action)
 		ebtask::log(command_value + " [ EXECUTED ]");
 }
 
@@ -88,6 +87,7 @@ static void handle_function(int code)
 	{
 		// set input alias value
 		ebtask_config.alias["@input"] = _CURRENT_FUNCTION_ARG_;
+		// FIXME: Change the value of size to the real value of _CURRENT_FUNCTION_ARG_ size
 		ebtask_config.alias["@input.size"] = _CURRENT_FUNCTION_ARG_;
 
 		// STEP1: clean input

@@ -29,7 +29,7 @@ namespace ebtask
 		ebtask::KeyBinding keybinding{};
 		std::string name{}, output_reader{}, input_cleaner{}, on_start{}, on_stop{};
 		bool log_action{ true };
-		ebtask::ActionHandler handler_type;
+		ebtask::ActionHandler handler_type{ ebtask::ActionHandler::KEYBINDING };
 		Mode() = default;
 	};
 

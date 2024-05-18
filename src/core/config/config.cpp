@@ -13,7 +13,6 @@ namespace fs = std::filesystem;
 using json = nlohmann::json;
 
 const static char *EBTASK_CONFIG_VALUE = std::getenv(EBTASK_PATH_ENV);
-const static std::string FILE_PATH_SEPARATOR = "/";	 // as ebtask is only for unix system
 const static std::unordered_map<std::string, ebtask::ActionHandler> enum_hanlder = {
 	{ "FUNCTION", ebtask::ActionHandler::FUNCTION },
 	{ "KEY_BINDING", ebtask::ActionHandler::FUNCTION }
@@ -37,7 +36,7 @@ std::string ebtask::get_config_path()
 
 std::string ebtask::get_config_file_path(std::string file_name)
 {
-	return ebtask::get_config_path() + FILE_PATH_SEPARATOR + file_name;
+	return ebtask::get_config_path() + ebtask::FILE_SEPARTOR + file_name;
 }
 
 ebtask::EbtaskConfig ebtask::EbtaskConfig::generate_new_config_template()
