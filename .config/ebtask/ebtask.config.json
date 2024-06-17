@@ -1,0 +1,49 @@
+{
+  "alias": [
+    {
+      "name": "@wl_clipboard_copy",
+      "value": "wl-copy \"output\""
+    },
+    {
+      "name": "@wtype_type",
+      "value": "wtype \"@output\""
+    },
+    {
+      "name": "@xclip_copy",
+      "value": "echo \"@output\" | xclip -selection clipboard"
+    },
+    {
+      "name": "@xdotool_erase",
+      "value": "xdotool key --clearmodifiers --repeat @isize BackSpace"
+    },
+    {
+      "name": "@xdotool_type",
+      "value": "xdotool type \"@output\""
+    }
+  ],
+  "modes": [
+    {
+      "name": "example",
+      "handler_type": "FUNCTION",
+      "output_reader": "@wtype_type",
+      "input_cleaner": "",
+      "log_action": true,
+      "on_start": "",
+      "on_stop": "",
+      "keybinding": [
+        42,
+        54
+      ],
+      "actions": [
+        {
+          "command": "echo \"Hello @input\"",
+          "function": "sayHello"
+        }
+      ]
+    }
+  ],
+  "normal_mode_keybinding": [
+    1,
+    42
+  ]
+}

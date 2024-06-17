@@ -1,0 +1,466 @@
+{
+  "keys": [
+    {
+      "altgr": "ENTER",
+      "capslock": "ENTER",
+      "code": 28,
+      "normal": "ENTER",
+      "shift": "ENTER"
+    },
+    {
+      "altgr": "CAPSLOCK",
+      "capslock": "CAPSLOCK",
+      "code": 58,
+      "normal": "CAPSLOCK",
+      "shift": "CAPSLOCK"
+    },
+    {
+      "altgr": "LEFT_SHIFT",
+      "capslock": "LEFT_SHIFT",
+      "code": 42,
+      "normal": "LEFT_SHIFT",
+      "shift": "LEFT_SHIFT"
+    },
+    {
+      "altgr": "RIGHT_SHIFT",
+      "capslock": "RIGHT_SHIFT",
+      "code": 54,
+      "normal": "RIGHT_SHIFT",
+      "shift": "RIGHT_SHIFT"
+    },
+    {
+      "altgr": "ALTGR",
+      "capslock": "ALTGR",
+      "code": 100,
+      "normal": "ALTGR",
+      "shift": "ALTGR"
+    },
+    {
+      "altgr": "SPACE",
+      "capslock": "SPACE",
+      "code": 57,
+      "normal": "SPACE",
+      "shift": "SPACE"
+    },
+    {
+      "altgr": "BACKSPACE",
+      "capslock": "BACKSPACE",
+      "code": 14,
+      "normal": "BACKSPACE",
+      "shift": "BACKSPACE"
+    },
+    {
+      "altgr": "ECHAP",
+      "capslock": "ECHAP",
+      "code": 1,
+      "normal": "ECHAP",
+      "shift": "ECHAP"
+    },
+    {
+      "altgr": "a",
+      "capslock": "A",
+      "code": 16,
+      "normal": "a",
+      "shift": "A"
+    },
+    {
+      "altgr": "z",
+      "capslock": "Z",
+      "code": 17,
+      "normal": "z",
+      "shift": "Z"
+    },
+    {
+      "altgr": "e",
+      "capslock": "E",
+      "code": 18,
+      "normal": "e",
+      "shift": "E"
+    },
+    {
+      "altgr": "r",
+      "capslock": "R",
+      "code": 19,
+      "normal": "r",
+      "shift": "R"
+    },
+    {
+      "altgr": "t",
+      "capslock": "T",
+      "code": 20,
+      "normal": "t",
+      "shift": "T"
+    },
+    {
+      "altgr": "y",
+      "capslock": "Y",
+      "code": 21,
+      "normal": "y",
+      "shift": "Y"
+    },
+    {
+      "altgr": "u",
+      "capslock": "U",
+      "code": 22,
+      "normal": "u",
+      "shift": "U"
+    },
+    {
+      "altgr": "i",
+      "capslock": "I",
+      "code": 23,
+      "normal": "i",
+      "shift": "I"
+    },
+    {
+      "altgr": "o",
+      "capslock": "O",
+      "code": 24,
+      "normal": "o",
+      "shift": "O"
+    },
+    {
+      "altgr": "p",
+      "capslock": "P",
+      "code": 25,
+      "normal": "p",
+      "shift": "P"
+    },
+    {
+      "altgr": "√",
+      "capslock": "^",
+      "code": 26,
+      "normal": "^",
+      "shift": "¨"
+    },
+    {
+      "altgr": "¤",
+      "capslock": "$",
+      "code": 27,
+      "normal": "$",
+      "shift": "£"
+    },
+    {
+      "altgr": "`",
+      "capslock": "*",
+      "code": 43,
+      "normal": "*",
+      "shift": "µ"
+    },
+    {
+      "altgr": "q",
+      "capslock": "Q",
+      "code": 30,
+      "normal": "q",
+      "shift": "Q"
+    },
+    {
+      "altgr": "s",
+      "capslock": "S",
+      "code": 31,
+      "normal": "s",
+      "shift": "S"
+    },
+    {
+      "altgr": "d",
+      "capslock": "D",
+      "code": 32,
+      "normal": "d",
+      "shift": "D"
+    },
+    {
+      "altgr": "f",
+      "capslock": "F",
+      "code": 33,
+      "normal": "f",
+      "shift": "F"
+    },
+    {
+      "altgr": "g",
+      "capslock": "G",
+      "code": 34,
+      "normal": "g",
+      "shift": "G"
+    },
+    {
+      "altgr": "h",
+      "capslock": "H",
+      "code": 35,
+      "normal": "h",
+      "shift": "H"
+    },
+    {
+      "altgr": "j",
+      "capslock": "J",
+      "code": 36,
+      "normal": "j",
+      "shift": "J"
+    },
+    {
+      "altgr": "k",
+      "capslock": "K",
+      "code": 37,
+      "normal": "k",
+      "shift": "K"
+    },
+    {
+      "altgr": "l",
+      "capslock": "L",
+      "code": 38,
+      "normal": "l",
+      "shift": "L"
+    },
+    {
+      "altgr": "m",
+      "capslock": "M",
+      "code": 39,
+      "normal": "m",
+      "shift": "M"
+    },
+    {
+      "altgr": "ù",
+      "capslock": "%",
+      "code": 40,
+      "normal": "ù",
+      "shift": "%"
+    },
+    {
+      "altgr": "w",
+      "capslock": "W",
+      "code": 44,
+      "normal": "w",
+      "shift": "W"
+    },
+    {
+      "altgr": "x",
+      "capslock": "X",
+      "code": 45,
+      "normal": "x",
+      "shift": "X"
+    },
+    {
+      "altgr": "c",
+      "capslock": "C",
+      "code": 46,
+      "normal": "c",
+      "shift": "C"
+    },
+    {
+      "altgr": "v",
+      "capslock": "V",
+      "code": 47,
+      "normal": "v",
+      "shift": "V"
+    },
+    {
+      "altgr": "b",
+      "capslock": "B",
+      "code": 48,
+      "normal": "b",
+      "shift": "B"
+    },
+    {
+      "altgr": "n",
+      "capslock": "N",
+      "code": 49,
+      "normal": "n",
+      "shift": "N"
+    },
+    {
+      "altgr": ",",
+      "capslock": "?",
+      "code": 50,
+      "normal": ",",
+      "shift": "?"
+    },
+    {
+      "altgr": ";",
+      "capslock": ".",
+      "code": 51,
+      "normal": ";",
+      "shift": "."
+    },
+    {
+      "altgr": ":",
+      "capslock": "/",
+      "code": 52,
+      "normal": ":",
+      "shift": "/"
+    },
+    {
+      "altgr": "!",
+      "capslock": "§",
+      "code": 53,
+      "normal": "!",
+      "shift": "§"
+    },
+    {
+      "altgr": " ",
+      "capslock": " ",
+      "code": 57,
+      "normal": " ",
+      "shift": " "
+    },
+    {
+      "altgr": "1",
+      "capslock": "1",
+      "code": 79,
+      "normal": "1",
+      "shift": "1"
+    },
+    {
+      "altgr": "2",
+      "capslock": "2",
+      "code": 80,
+      "normal": "2",
+      "shift": "2"
+    },
+    {
+      "altgr": "3",
+      "capslock": "3",
+      "code": 81,
+      "normal": "3",
+      "shift": "3"
+    },
+    {
+      "altgr": "4",
+      "capslock": "4",
+      "code": 75,
+      "normal": "4",
+      "shift": "4"
+    },
+    {
+      "altgr": "5",
+      "capslock": "5",
+      "code": 76,
+      "normal": "5",
+      "shift": "5"
+    },
+    {
+      "altgr": "6",
+      "capslock": "6",
+      "code": 77,
+      "normal": "6",
+      "shift": "6"
+    },
+    {
+      "altgr": "7",
+      "capslock": "7",
+      "code": 71,
+      "normal": "7",
+      "shift": "7"
+    },
+    {
+      "altgr": "8",
+      "capslock": "8",
+      "code": 72,
+      "normal": "8",
+      "shift": "8"
+    },
+    {
+      "altgr": "9",
+      "capslock": "9",
+      "code": 73,
+      "normal": "9",
+      "shift": "9"
+    },
+    {
+      "altgr": "+",
+      "capslock": "+",
+      "code": 78,
+      "normal": "+",
+      "shift": "+"
+    },
+    {
+      "altgr": "0",
+      "capslock": "0",
+      "code": 82,
+      "normal": "0",
+      "shift": "0"
+    },
+    {
+      "altgr": "¬",
+      "capslock": "²",
+      "code": 41,
+      "normal": "²",
+      "shift": "~"
+    },
+    {
+      "altgr": "¹",
+      "capslock": "&",
+      "code": 2,
+      "normal": "&",
+      "shift": "1"
+    },
+    {
+      "altgr": "~",
+      "capslock": "É",
+      "code": 3,
+      "normal": "é",
+      "shift": "2"
+    },
+    {
+      "altgr": "#",
+      "capslock": "\"",
+      "code": 4,
+      "normal": "\"",
+      "shift": "3"
+    },
+    {
+      "altgr": "{",
+      "capslock": "'",
+      "code": 5,
+      "normal": "'",
+      "shift": "4"
+    },
+    {
+      "altgr": "[",
+      "capslock": "(",
+      "code": 6,
+      "normal": "(",
+      "shift": "5"
+    },
+    {
+      "altgr": "|",
+      "capslock": "-",
+      "code": 7,
+      "normal": "-",
+      "shift": "6"
+    },
+    {
+      "altgr": "`",
+      "capslock": "È",
+      "code": 8,
+      "normal": "è",
+      "shift": "7"
+    },
+    {
+      "altgr": "\\",
+      "capslock": "_",
+      "code": 9,
+      "normal": "_",
+      "shift": "8"
+    },
+    {
+      "altgr": "^",
+      "capslock": "Ç",
+      "code": 10,
+      "normal": "ç",
+      "shift": "9"
+    },
+    {
+      "altgr": "@",
+      "capslock": "À",
+      "code": 11,
+      "normal": "à",
+      "shift": "0"
+    },
+    {
+      "altgr": "]",
+      "capslock": ")",
+      "code": 12,
+      "normal": ")",
+      "shift": "°"
+    }
+  ]
+}
