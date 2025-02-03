@@ -13,18 +13,7 @@ static const std::unordered_map<std::string, ebtask::PathExistErrorAction> enum_
 	{ "OVERRIDE", ebtask::PathExistErrorAction::OVERRIDE }
 };
 
-void ebtask::save_file(std::string path, const std::string &text)
-{
-	std::ofstream file(path);
-	if (file.is_open())
-	{
-		file << text;
-		return;
-	}
-	throw std::runtime_error("Cannot save " + path);
-}
-
-void ebtask::save_json_file(std::string path, const nlohmann::json &text)
+void ebtask::write_json_file(std::string path, const nlohmann::json &text)
 {
 	std::ofstream file(path);
 	if (file.is_open())
@@ -35,13 +24,7 @@ void ebtask::save_json_file(std::string path, const nlohmann::json &text)
 	throw std::runtime_error("Cannot save " + path);
 }
 
-void ebtask::delete_file(std::string path)
-{
-	if (!(std::remove(path.c_str()) == 0))
-		throw std::runtime_error("Cannot delete " + path);
-}
-
-void ebtask::copy_folder(std::string source, std::string destination)
+void ebtask::copy(std::string source, std::string destination)
 {
 	try
 	{
@@ -53,22 +36,6 @@ void ebtask::copy_folder(std::string source, std::string destination)
 	}
 }
 
-void ebtask::delete_folder(std::string path)
-{
-	if (!fs::exists(path))
-		return;
-
-	try
-	{
-		fs::remove_all(path);
-	}
-	catch (const std::filesystem::filesystem_error &e)
-	{
-		std::string message = e.what();
-		throw std::runtime_error(message);
-	}
-}
-
 std::string ebtask::get_dumb_unique_prefix()
 {
 	static int id = 0;
@@ -77,7 +44,7 @@ std::string ebtask::get_dumb_unique_prefix()
 	return std::to_string(ms) + "_" + std::to_string(id++);
 }
 
-nlohmann::json ebtask::get_json_file_content(std::string path, bool required)
+nlohmann::json ebtask::read_json_file(std::string path, bool required)
 {
 	std::ifstream config_file(path);
 	if (!config_file.is_open() && required)

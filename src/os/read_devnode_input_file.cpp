@@ -5,7 +5,7 @@
 #include <csignal>
 #include <stdexcept>
 
-#include "os_inputs.hpp"
+#include "os.hpp"
 
 // TO handle ctrl + c or something else that can stop the application
 static bool is_running = true;
@@ -15,7 +15,7 @@ static void signal_handler(int signal)
 	is_running = false;
 }
 
-void ebtask::read_input_file(const char *devnode, ebtask::ReaderFunction callback)
+void ebtask::os::read_devnode_input_file(const char *devnode, ebtask::os::input::ReaderFunction callback)
 {
 	std::signal(SIGINT, signal_handler);
 	struct input_event ev;
@@ -34,7 +34,7 @@ void ebtask::read_input_file(const char *devnode, ebtask::ReaderFunction callbac
 
 		try
 		{
-			is_running = callback(ev.code, static_cast<KeyStatus>(ev.value), fd, devnode);
+			is_running = callback(ev.code, static_cast<input::KeyStatus>(ev.value), fd, devnode);
 		}
 		catch (const std::runtime_error &error)
 		{

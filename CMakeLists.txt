@@ -11,24 +11,19 @@ set(EBTASK_SOURCES
     src/core/run.cpp
     src/core/config/config.cpp
     src/core/actions/generate_config.cpp
-    src/core/actions/remap_layout.cpp
+    src/core/actions/configure_layout.cpp
     src/core/actions/listen_event.cpp
-    src/core/actions/key_handler.cpp
-    src/core/os_inputs/guess_input_file.cpp
-    src/core/os_inputs/read_input_file.cpp
-    src/utils/os.cpp
+    src/os/keyhandler.cpp
+    src/os/read_devnode_input_file.cpp
+    src/os/execute_command.cpp
     src/utils/fs_utils.cpp)
 
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/ebtask_config.hpp.in"
-               "${CMAKE_CURRENT_SOURCE_DIR}/src/core/ebtask_config.hpp")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.hpp.in"
+               "${CMAKE_CURRENT_SOURCE_DIR}/src/generated_config.hpp")
 # Find deps
 
 # rcli
 find_package(rcli REQUIRED)
-
-# libudev
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(UDEV REQUIRED libudev)
 
 # xclip (will be optional)
 find_program(XCLIP_EXECUTABLE xclip)
@@ -57,14 +52,8 @@ endif()
 # Creating the executable and link its deps
 add_executable(ebtask ${EBTASK_SOURCES})
 
-target_include_directories(
-  ebtask
-  PRIVATE ${UDEV_INCLUDE_DIRS}
-  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(
-  ebtask
-  PRIVATE ${UDEV_LIBRARIES}
-  PRIVATE rcli)
+target_include_directories(ebtask PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(ebtask PRIVATE rcli)
 
 # For installation
 include(GNUInstallDirs)
