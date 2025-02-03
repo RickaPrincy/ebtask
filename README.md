@@ -1,36 +1,42 @@
-# Ebtask: Execute Your Background Task (And Take Its Output Easily)
+# Ebtask: Execute your command in background 
 
-**ebtask**: execute your background task (and take read it's output easily)
+Ebtask is a tool that can listen to your keyboard events `(like a keylogger`) and execute a command that you want based on key input.
 
-Ebtask is a tool that can listen to your keyboard events (`like a keylogger`) and execute any command that you want based on key input (`like a keymap`). What? Only that?? No, with Ebtask, you can `pass parameters and use text as command triggers (like "copylot")`. So, what exactly ??? :anguished:
+What? Only that?? No, with Ebtask, you can pass parameters to the command to execute by using a string as a command trigger. So, it's not really a keymap, but more like a `copylot`.
 
-## Getting started (hope you understand here)
+Huh? So, what exactly??? :frowning:
 
-You can use Ebtask for many reasons. Here's one example to help you understand what Ebtask is:
+## Getting started (hope you understand here) :walking:
 
-[BadUsage but Simple Example]: Suppose you have an `math exam using Google Forms`, and you're `not allowed to open any other tabs`. On your form, you write `chatgpt(what is 5 + 5)`. Here, you ask ChatGPT with `what is 5 + 5` text directly on the Google Form, and you can receive the response directly on the form, eliminating the need for another tab.
+You can use Ebtask for many reasons but here's one example to help you understand what Ebtask is:
 
-How ?? :hushed:
+#### [BadUsage but Simple Example]: Math Exam 
 
-You would write some code to fetch the ChatGPT API (in any language), make it a CLI application that Ebtask will call. 
-So, you associate your CLI application with Ebtask actions (here, our action is `chatgpt(@input)`; more details on the Ebtask configuration later).
+First, here is a part of ebtask config: 
+```json
+{                                                                        
+    "command": "/home/johndoe/scripts/ask-chatgpt-and-copy-response.sh --input \"@input\",                                                                                        
+    "function": "chatgpt"                                                                                                            
+}                                                                                                                                  
+```
 
-So, when you type chatgpt(something), the value of "something" will be passed to your CLI application. 
-Then, in your code that fetches the ChatGPT API, you log just the response (using console.log() for example in JavaScript), and Ebtask will take it to another CLI specified in the output_reader section of the Ebtask configuration. 
-The output_reader is simply a CLI that gives you access to the logged response to your form.
+So now, suppose you have a `math exam using Google Forms`, and you're not allowed to open `any other tabs`. :skull:
 
-But how ?? 
+What can ebtask do for you? It allows you to type `chatgpt(what is 5 + 5) directly on your Google Form` (or anywhere else; ebtask only needs the key pressed event).  
 
-But how??
+Then, ebtask will take the parameter `what is 5 + 5` and execute this: `/home/johndoe/scripts/ask-chatgpt-and-copy-response.sh --input "@input"` by replacing **@input** with **what is 5 + 5**.
 
-It's easy. You could use, for instance, [xclip](https://github.com/astrand/xclip) to copy the response and paste it on your form. Or, even cooler, use [xdotool](https://github.com/jordansissel/xdotool) to directly write the response on the form.
+So this will be executed: `/home/johndoe/scripts/ask-chatgpt-and-copy-response.sh --input "what is 5 + 5"`.
+
+**What about ChatGPT's response?** 
+
+It's easy! Based on your system, adapt the script to copy the response or to write it directly onto your form like a copilot (uwu) using something like xdotool or similar tools
 
 # Installation (no release yet) 
 
 - Dependancies
     - CMake (Version 3.27 or later)
     - C++ Compiler with C++17 support
-    - libudev
     - [rcli](https://github.com/RickaPrincy/rcli)
 
 - Build manually
@@ -52,30 +58,3 @@ cd ../..
 
 rm -rf ebtask 
 ```
-
-# Configuration 
-
-## Sep1:
-
-## :warning: Ebtask needs to listen to your keyboard like a keylogger, so you must grant it access. Therefore, for security reasons, run Ebtask only when necessary.
-
-- Now, give ebtask user acces to your keyboard 
-
-```bash
-sudo groupadd ebtask 
-sudo usermod -aG ebtask your_username
-sudo nano /etc/udev/rules.d/99-input.rules
-SUBSYSTEM=="input", GROUP="ebtask", MODE="0640"
-sudo udevadm control --reload-rules
-sudo udevadm trigger
-```
-- Create directory for ebtask configuration and add the path of taht folder in env with name `EBTASK_PATH`
-    - example: add this line in your `.zshrc (or .bashrc)`: 
-    ```bash
-        export EBTASK_PATH="/home/ricka/.config/ebtask"
-    ```
-
-## Step2:
-
-- You can run `ebtask init_config` to generate new ebtask configuration (a file named `ebtask.config.json` should be created to your `EBTASK_PATH`) 
-- ...

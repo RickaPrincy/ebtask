@@ -15,7 +15,7 @@ bool ebtask::os::execute_command(const std::string &command, bool log)
 	const auto result_status = std::system(cmd);
 
 	if (log)
-		ebtask::log("EXECUTED: " + command + " -> [ RESPONSE_CODE: ]" + std::to_string(result_status));
+		ebtask::log("EXECUTED: " + command + " -> [ RESPONSE_CODE : " + std::to_string(result_status) + "]");
 
 	return result_status == 0;
 }
