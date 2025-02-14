@@ -32,29 +32,8 @@ So this will be executed: `/home/johndoe/scripts/ask-chatgpt-and-copy-response.s
 
 It's easy! Based on your system, adapt the script to copy the response or to write it directly onto your form like a copilot (uwu) using something like xdotool or similar tools
 
-# Installation (no release yet) 
-
-- Dependancies
-    - CMake (Version 3.27 or later)
-    - C++ Compiler with C++17 support
-    - [rcli](https://github.com/RickaPrincy/rcli)
-
-- Build manually
+# Installation
 
 ```bash
-git clone https://github.com/RickaPrincy/ebtask.git
-
-cd ebtask
-
-mkdir build
-
-cd build
-
-cmake -S .. -B .
-
-sudo make install
-
-cd ../..
-
-rm -rf ebtask 
+bash <(curl -s https://raw.githubusercontent.com/RickaPrincy/ebtask/main/install.sh)
 ```

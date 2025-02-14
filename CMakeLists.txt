@@ -20,22 +20,8 @@ set(EBTASK_SOURCES
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.hpp.in"
                "${CMAKE_CURRENT_SOURCE_DIR}/src/generated_config.hpp")
-# Find deps
 
-# rcli
 find_package(rcli REQUIRED)
-
-# xclip (will be optional)
-find_program(XCLIP_EXECUTABLE xclip)
-if(NOT XCLIP_EXECUTABLE)
-  message(FATAL_ERROR "xclip not found. Please install it.")
-endif()
-
-# xdotool (will be optional)
-find_program(XDOTOOL_EXECUTABLE xdotool)
-if(NOT XDOTOOL_EXECUTABLE)
-  message(FATAL_ERROR "xdotool not found. Please install it.")
-endif()
 
 # clang-format [optional]
 find_program(CLANG_FORMAT_EXECUTABLE NAMES clang-format)
